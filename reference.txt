@@ -1,0 +1,2 @@
+#Animazione morte virus
+https://github.com/mrdoob/three.js/blob/master/examples/webgl_points_dynamic.html
