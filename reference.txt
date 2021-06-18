@@ -1,2 +1,12 @@
 #Animazione morte virus
 https://github.com/mrdoob/three.js/blob/master/examples/webgl_points_dynamic.html
+
+#Keyboards controls SCENE
+---- Orbit Controls
+https://threejs.org/docs/#examples/en/controls/OrbitControls
+https://threejs.org/examples/#misc_controls_orbit
+https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_orbit.html
+
+---- PointerLockControls
+https://threejs.org/examples/?q=controls#misc_controls_pointerlock
+https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html

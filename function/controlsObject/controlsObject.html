@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>01.10 - Keyboard controls</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+
+
+<script type="module">
+
+    import * as THREE from './three.module.js';
+    import { OrbitControls } from './OrbitControls.js';
+    // global variables
+    var renderer;
+    var scene;
+    var camera;
+    var controls;
+
+    function init() {
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
+        scene = new THREE.Scene();
+
+        // create a camera, which defines where we're looking at.
+        //camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
+        // position and point the camera to the center of the scene
+        //camera.position.set( 15, 16, 13 );
+        camera.position.set( 400, 200, 0 );
+        //camera.lookAt(scene.position);
+
+
+        // create a render, sets the background color and the size
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // create a cube and add to scene
+        var cubeGeometry = new THREE.BoxGeometry(10 * Math.random(), 10 * Math.random(), 10 * Math.random());
+        var cubeMaterial = new THREE.MeshNormalMaterial();
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.name = 'cube';
+        scene.add(cube);
+
+
+
+
+        // add the output of the renderer to the html element
+        document.body.appendChild(renderer.domElement);
+
+        // controls
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.listenToKeyEvents( window ); // optional
+				//controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+				controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+				controls.dampingFactor = 0.05;
+
+				controls.screenSpacePanning = false;
+
+				controls.minDistance = 100;
+				controls.maxDistance = 500;
+
+				controls.maxPolarAngle = Math.PI / 2;
+
+        setupKeyLogger();
+//        setupKeyControls();
+
+        // call the render function
+        render();
+    }
+
+    function setupKeyLogger() {
+        document.onkeydown = function (e) {
+            console.log(e);
+        }
+    }
+
+    function setupKeyControls() {
+        var cube = scene.getObjectByName('cube');
+        document.onkeydown = function (e) {
+            switch (e.keyCode) {
+                // w = 87 -> avanti
+                // a = 65 -> sinistra
+                // s = 83 -> indietro
+                // d = 68 -> destra
+                case 37:
+                    cube.rotation.x += 0.2;
+                    break;
+                case 38:
+                    cube.rotation.z -= 0.2;
+                    break;
+                case 39:
+                    cube.rotation.x -= 0.2;
+                    break;
+                case 40:
+                    cube.rotation.z += 0.2;
+                    break;
+            }
+        };
+    }
+
+    function render() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+    }
+
+    // calls the init function when the window is done loading.
+    window.onload = init;
+
+</script>
+<body>
+</body>
+</html>
