@@ -82,7 +82,7 @@ class OrbitControls extends EventDispatcher {
 
 		// The four arrow keys
 		//this.keys = { LEFT: 'ArrowLeft', UP: 'ArrowUp', RIGHT: 'ArrowRight', BOTTOM: 'ArrowDown' };
-    this.keys = { LEFT: 'a', UP: 'w', RIGHT: 'd', BOTTOM: 's' };
+    this.keys = { LEFT: 'KeyA', UP: 'KeyW', RIGHT: 'KeyD', BOTTOM: 'KeyS' };
 		// Mouse buttons
 		this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
 

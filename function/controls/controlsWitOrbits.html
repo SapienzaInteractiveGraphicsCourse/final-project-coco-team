@@ -22,6 +22,11 @@
     var camera;
     var controls;
 
+    var moveForward = false;
+    var moveBackward = false;
+    var moveLeft = false;
+    var moveRight = false;
+
     function init() {
 
         // create a scene, that will hold all our elements such as objects, cameras and lights.
@@ -32,7 +37,7 @@
         camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
         // position and point the camera to the center of the scene
         //camera.position.set( 15, 16, 13 );
-        camera.position.set( 400, 200, 0 );
+        camera.position.set( 100, 100, 0 );
         //camera.lookAt(scene.position);
 
 
@@ -63,13 +68,13 @@
 
 				controls.screenSpacePanning = false;
 
-				controls.minDistance = 100;
-				controls.maxDistance = 500;
+				controls.minDistance = 50;
+				controls.maxDistance = 100;
 
 				controls.maxPolarAngle = Math.PI / 2;
 
-        setupKeyLogger();
-//        setupKeyControls();
+//        setupKeyLogger();
+        setupKeyControls();
 
         // call the render function
         render();
@@ -89,21 +94,80 @@
                 // a = 65 -> sinistra
                 // s = 83 -> indietro
                 // d = 68 -> destra
-                case 37:
+                case 87:
                     cube.rotation.x += 0.2;
                     break;
-                case 38:
+                case 65:
                     cube.rotation.z -= 0.2;
                     break;
-                case 39:
+                case 83:
                     cube.rotation.x -= 0.2;
                     break;
-                case 40:
+                case 68:
                     cube.rotation.z += 0.2;
                     break;
             }
         };
+        // const onKeyDown = function ( event ) {
+        //
+				// 	switch ( event.code ) {
+        //
+				// 		case 'ArrowUp':
+				// 		case 'KeyW':
+				// 			moveForward = true;
+				// 			break;
+        //
+				// 		case 'ArrowLeft':
+				// 		case 'KeyA':
+				// 			moveLeft = true;
+				// 			break;
+        //
+				// 		case 'ArrowDown':
+				// 		case 'KeyS':
+				// 			moveBackward = true;
+				// 			break;
+        //
+				// 		case 'ArrowRight':
+				// 		case 'KeyD':
+				// 			moveRight = true;
+				// 			break;
+        //
+				// 	}
+
+				// };
+        //
+				// const onKeyUp = function ( event ) {
+        //
+				// 	switch ( event.code ) {
+        //
+				// 		case 'ArrowUp':
+				// 		case 'KeyW':
+				// 			moveForward = false;
+				// 			break;
+        //
+				// 		case 'ArrowLeft':
+				// 		case 'KeyA':
+				// 			moveLeft = false;
+				// 			break;
+        //
+				// 		case 'ArrowDown':
+				// 		case 'KeyS':
+				// 			moveBackward = false;
+				// 			break;
+        //
+				// 		case 'ArrowRight':
+				// 		case 'KeyD':
+				// 			moveRight = false;
+				// 			break;
+        //
+				// 	}
+        //
+				// };
+        //
+				// document.addEventListener( 'keydown', onKeyDown );
+				// document.addEventListener( 'keyup', onKeyUp );
     }
+
 
     function render() {
         renderer.render(scene, camera);
