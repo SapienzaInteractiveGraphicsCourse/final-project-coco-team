@@ -10,11 +10,14 @@ import * as syringe from "./function/syringe.js";
 var camera, scene, renderer, controls;
 var scene_menu,camera_menu;
 var stato;
+var pointer;
 
 init();
 
 function init() {
   stato=1;
+
+  pointer = new THREE.Vector2();
 
   renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -49,11 +52,13 @@ function init() {
     console.log( 'An error happened:',error );
   });
 
+  var roomTexture;
   var room1;
-  var roomPromise = room.getRoom(100.0, 100.0, 100.0);
-  roomPromise.then(
+  var roomTexturePromise = room.getTexture();
+  roomTexturePromise.then(
   function (resolve) {
-    room1=resolve;
+    roomTexture=resolve;
+    room1=room.getRoom(100,100,100,roomTexture);
     scene.add(room1);
   },
   function (error) {
@@ -85,8 +90,12 @@ function onWindowResize() {
 }
 
 function animate() {
-
   requestAnimationFrame( animate );
+  render();
+  update();
+}
+
+function render(){
   switch(stato) {
     case 0:
       renderer.render( scene_menu, camera_menu );
@@ -97,7 +106,20 @@ function animate() {
     default:
       console.log("pippo");
   }
-
 }
+
+function update(){
+  switch(stato) {
+    case 0:
+      renderer.render( scene_menu, camera_menu );
+      break;
+    case 1:
+      renderer.render( scene, camera );
+      break;
+    default:
+      console.log("pippo");
+  }
+}
+
 window.addEventListener('resize', onWindowResize);
 
