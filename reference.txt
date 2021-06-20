@@ -11,6 +11,12 @@ https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_orbit.html
 https://threejs.org/examples/?q=controls#misc_controls_pointerlock
 https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
 
+---- Collision detector
+https://codepen.io/bbx/pen/EpLobJ?editors=0010
+
+---- Text
+https://threejs.org/docs/#api/en/geometries/TextGeometry
+
 ---TODOLIST
 importazione uomo
 collisione oggetti
