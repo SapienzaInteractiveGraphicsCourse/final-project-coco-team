@@ -46,3 +46,10 @@ export function getRoom (width, height, depth, veinTex) {
     room.translateY(-25);
     return(room);
 }
+
+export function getLevel(veinTex){
+  var room = new THREE.Group();
+  var temp = getRoom(100,100,100,veinTex);
+  room.add(temp);
+  return(room);
+}

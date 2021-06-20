@@ -58,7 +58,7 @@ function init() {
   roomTexturePromise.then(
   function (resolve) {
     roomTexture=resolve;
-    room1=room.getRoom(100,100,100,roomTexture);
+    room1=room.getLevel(roomTexture);
     scene.add(room1);
   },
   function (error) {
