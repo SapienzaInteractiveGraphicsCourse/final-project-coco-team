@@ -7,7 +7,7 @@ export function getRoom (width, height, depth) {
     var textureLoader = new THREE.TextureLoader();
     textureLoader.load( "./resources/texture/surfaces.jpg", function ( map ) {
         var veinTex = map;
-        const material = new THREE.MeshPhongMaterial( { color: 0x800000, map: veinTex } );
+        const material = new THREE.MeshPhongMaterial( { color: 0x800000, map: veinTex, bumpMap: veinTex } );
         var base_width = width; //100.0;
         var base_height = 5.0;
         var base_depth = depth; //100.0;
@@ -36,6 +36,10 @@ export function getRoom (width, height, depth) {
         //room.translateX(100)
         room.translateY(-25);
         resolve(room);
+    },function ( xhr ) {
+    },
+    function ( error ) {
+      reject(error);
     });
   });
   return myPromise;
