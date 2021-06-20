@@ -21,6 +21,9 @@ export function getRoom (width, height, depth, veinTex) {
     var base_height = 5.0;
     var base_depth = depth; //100.0;
     const geometry_1 = new THREE.BoxGeometry(base_width, base_height, base_depth);
+
+
+
     const base = new THREE.Mesh( geometry_1, material);
     base.position.set(0.0, 0.0, 0.0);
 
@@ -36,6 +39,20 @@ export function getRoom (width, height, depth, veinTex) {
     wall_width = base_width;
     wall_depth = base_height;
     const geometry_3 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
+
+    // min =
+    // var uvAttribute = geometry_3.attributes.uv;
+    // for ( var i = 0; i < uvAttribute.count; i ++ ) {
+    //     var u = uvAttribute.getX( i );
+    //     var v = uvAttribute.getY( i );
+    //     // do something with uv
+    //     u = u + Math.random() * Math.random();
+    //     v = v + Math.random() * Math.random();
+    //     // write values back to attribute
+    //     uvAttribute.setXY( i, u, v );
+    // }
+    // uvAttribute.needsUpdate = true;
+
     const wall3 = new THREE.Mesh( geometry_3, material );
     const wall4 = new THREE.Mesh( geometry_3, material );
     wall3.position.set(0.0, wall_height/2 + base_height/2, -(wall_depth/2 - base_depth/2));
@@ -48,8 +65,15 @@ export function getRoom (width, height, depth, veinTex) {
 }
 
 export function getLevel(veinTex){
+  //var veinTex1 = veinTex.clone();
   var room = new THREE.Group();
-  var temp = getRoom(100,100,100,veinTex);
+  var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
   room.add(temp);
+  // veinTex1.wrapS = THREE.MirroredRepeatWrapping;
+  // veinTex1.wrapT = THREE.MirroredRepeatWrapping;
+  // veinTex1.repeat.set(0.1,1);
+  temp = getRoom(20.0, 700.0, 30.0, veinTex);
+  temp.translateX(20.0);
+  room.add(temp)
   return(room);
 }
