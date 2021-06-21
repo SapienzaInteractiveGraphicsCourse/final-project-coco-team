@@ -15,28 +15,26 @@ export function getTexture (){
 export function getRoom (width, height, depth, veinTex) {
     var mesh = new THREE.Mesh();
     var room = new THREE.Group();
-    veinTex.wrapS = THREE.MirroredRepeatWrapping;
-    veinTex.wrapT = THREE.MirroredRepeatWrapping;
-    var pippo=veinTex.clone();
-    pippo.needsUpdate = true;
-    var pluto=veinTex.clone(true);
-    pluto.needsUpdate = true;
-    var paperino=veinTex.clone(true);
-    paperino.needsUpdate = true;
-    
-    pippo.repeat.set(width/width*20,depth/width*20);
-    pluto.repeat.set(depth/height*20,height/height*20);
-    paperino.repeat.set(width/height*20,height/height*20);
-    
-    console.log(width,depth);
+    veinTex.wrapS = THREE.RepeatWrapping;
+    veinTex.wrapT = THREE.RepeatWrapping;
+    var tex_base=veinTex.clone();
+    tex_base.needsUpdate = true;
+    var tex_wall12=veinTex.clone(true);
+    tex_wall12.needsUpdate = true;
+    var tex_wall34=veinTex.clone(true);
+    tex_wall34.needsUpdate = true;
 
-    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, map: pippo, bumpMap: pippo } );
-    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: pluto, bumpMap: pluto } );
-    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: paperino, bumpMap: paperino } );
+    tex_base.repeat.set(width/width*5,depth/width*5);
+    tex_wall12.repeat.set(depth/height*3,height/height*3);
+    tex_wall34.repeat.set(width/height*3,height/height*3);
 
-    var base_width = width; //100.0;
-    var base_height = 5.0;
-    var base_depth = depth; //100.0;
+    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_base, bumpMap: tex_base } );
+    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall12, bumpMap: tex_wall12 } );
+    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall34, bumpMap: tex_wall34 } );
+
+    var base_width = width;
+    var base_height = 0.1;
+    var base_depth = depth;
     const geometry_1 = new THREE.BoxGeometry(base_width, base_height, base_depth);
 
 
@@ -44,7 +42,7 @@ export function getRoom (width, height, depth, veinTex) {
     base.position.set(0.0, 0.0, 0.0);
 
     var wall_width = base_height;
-    var wall_height =  height; //base_width - 20.0;
+    var wall_height =  height;
     var wall_depth = base_depth;
     const geometry_2 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
     const wall1 = new THREE.Mesh( geometry_2, material_1);
@@ -66,13 +64,195 @@ export function getRoom (width, height, depth, veinTex) {
     return(room);
 }
 
-export function getLevel(veinTex){
-  //var veinTex1 = veinTex.clone();
+export function getObstacle (width, height, depth, veinTex) {
+    var mesh = new THREE.Mesh();
+    var obstacle = new THREE.Group();
+    veinTex.wrapS = THREE.RepeatWrapping;
+    veinTex.wrapT = THREE.RepeatWrapping;
+    var tex_base=veinTex.clone();
+    tex_base.needsUpdate = true;
+    var tex_wall12=veinTex.clone(true);
+    tex_wall12.needsUpdate = true;
+    var tex_wall34=veinTex.clone(true);
+    tex_wall34.needsUpdate = true;
+
+    tex_base.repeat.set(width/width*5,depth/width*5);
+    tex_wall12.repeat.set(depth/height*3,height/height*3);
+    tex_wall34.repeat.set(width/height*3,height/height*3);
+
+    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_base, bumpMap: tex_base } );
+    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall12, bumpMap: tex_wall12 } );
+    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall34, bumpMap: tex_wall34 } );
+
+    var base_width = width;
+    var base_height = 0.1;
+    var base_depth = depth;
+    const geometry_1 = new THREE.BoxGeometry(base_width, base_height, base_depth);
+
+    const top = new THREE.Mesh( geometry_1, material_base);
+    top.position.set(0.0, height, 0.0);
+
+    var wall_width = base_height;
+    var wall_height =  height;
+    var wall_depth = base_depth;
+    const geometry_2 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
+    const wall1 = new THREE.Mesh( geometry_2, material_1);
+    const wall2 = new THREE.Mesh( geometry_2, material_1);
+    wall1.position.set(-(base_width/2 - wall_width/2), (wall_height/2 + base_height/2), 0.0);
+    wall2.position.set((base_width/2 - wall_width/2), (wall_height/2 + base_height/2), 0.0);
+
+    wall_width = base_width;
+    wall_depth = base_height;
+    const geometry_3 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
+    const wall3 = new THREE.Mesh( geometry_3, material_2);
+    const wall4 = new THREE.Mesh( geometry_3, material_2);
+    wall3.position.set(0.0, wall_height/2 + base_height/2, -(wall_depth/2 - base_depth/2));
+    wall4.position.set(0.0, wall_height/2 + base_height/2, (wall_depth/2 - base_depth/2));
+
+    obstacle.add(wall1, wall2, wall3, wall4, top);
+    obstacle.translateY(-25);
+    return(obstacle);
+}
+
+export function getMaze(veinTex){      
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
   room.add(temp);
-  temp = getRoom(20.0, 700.0, 30.0, veinTex);
-  temp.translateX(20.0);
-  room.add(temp)
+
+  temp = getObstacle(200.0, 700.0, 200.0, veinTex);
+  temp.translateX(400.0);
+  temp.translateZ(400.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 100.0, veinTex);
+  temp.translateX(200.0);
+  temp.translateZ(200.0);
+  room.add(temp);
+
+  temp = getObstacle(250.0, 700.0, 250.0, veinTex);
+  temp.translateX(-375.0);
+  temp.translateZ(375.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 100.0, veinTex);
+  temp.translateX(-250.0);
+  temp.translateZ(200.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 200.0, veinTex);
+  temp.translateX(-150.0);
+  temp.translateZ(300.0);
+  room.add(temp);
+
+  temp = getObstacle(400.0, 700.0, 200.0, veinTex);
+  temp.translateX(-300.0);
+  temp.translateZ(-400.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 100.0, veinTex);
+  temp.translateX(-50.0);
+  temp.translateZ(-450.0);
+  room.add(temp);
+
+  temp = getObstacle(200.0, 700.0, 50.0, veinTex);
+  temp.translateX(-5.0);
+  temp.translateZ(-350.0);
+  room.add(temp);
+
+  temp = getObstacle(200.0, 700.0, 200.0, veinTex);
+  temp.translateX(250.0);
+  temp.translateZ(-350.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 100.0, veinTex);
+  temp.translateX(250.0);
+  temp.translateZ(-250.0);
+  room.add(temp);
+
+  temp = getObstacle(200.0, 700.0, 50.0, veinTex);
+  temp.translateX(340.0);
+  temp.translateZ(-370.0);
+  room.add(temp);
+
+  temp = getObstacle(200.0, 700.0, 200.0, veinTex);
+  temp.translateX(-200.0);
+  temp.translateZ(-50.0);
+  room.add(temp);
+
+  temp = getObstacle(200.0, 700.0, 200.0, veinTex);
+  temp.translateX(270.0);
+  temp.translateZ(80.0);
+  room.add(temp);
+
+  temp = getObstacle(50.0, 700.0, 200.0, veinTex);
+  temp.translateX(230.0);
+  temp.translateZ(-5.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 400.0, veinTex);
+  temp.translateX(50.0);
+  temp.translateZ(300.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 100.0, veinTex);
+  temp.translateX(-50.0);
+  temp.translateZ(-75.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 140.0, veinTex);
+  temp.translateX(160.0); //200
+  temp.translateZ(400.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 140.0, veinTex);
+  temp.translateX(240.0); //280
+  temp.translateZ(400.0);
+  room.add(temp);
+
+  temp = getObstacle(80.0, 700.0, 20.0, veinTex);
+  temp.translateX(200.0);
+  temp.translateZ(340.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 20.0, veinTex);
+  temp.translateX(450.0);
+  temp.translateZ(-150.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 350.0, veinTex);
+  temp.translateX(400.0);
+  temp.translateZ(-65.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 200.0, veinTex);
+  temp.translateX(-450.0);
+  temp.translateZ(-240.0);
+  room.add(temp);
+
+  temp = getObstacle(150.0, 700.0, 20.0, veinTex);
+  temp.translateX(-380.0);
+  temp.translateZ(-270.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 100.0, veinTex);
+  temp.translateX(-330.0);
+  temp.translateZ(-220.0);
+  room.add(temp);
+
+  temp = getObstacle(100.0, 700.0, 20.0, veinTex);
+  temp.translateX(-450.0);
+  temp.translateZ(-50.0);
+  room.add(temp);
+
+  temp = getObstacle(20.0, 700.0, 150.0, veinTex);
+  temp.translateX(-410.0);
+  temp.translateZ(-90.0);
+  room.add(temp);
+
+  temp = getObstacle(400.0, 700.0, 20.0, veinTex);
+  temp.translateX(-300.0);
+  temp.translateZ(100.0);
+  room.add(temp);
+
   return(room);
 }
