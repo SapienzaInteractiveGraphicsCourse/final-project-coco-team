@@ -76,8 +76,8 @@ export function getObstacle (width, height, depth, veinTex) {
     tex_2.needsUpdate = true;
 
     tex_0.repeat.set(width/height*5,depth/height*5);
-    tex_1.repeat.set(depth/height*3,height/height*3);
-    tex_2.repeat.set(width/height*3,height/height*3);
+    tex_1.repeat.set(depth/height*5,height/height*5);
+    tex_2.repeat.set(width/height*5,height/height*5);
 
     const material_0 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_0, bumpMap: tex_0 } );
     const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_1, bumpMap: tex_1 } );
@@ -94,7 +94,7 @@ export function getObstacle (width, height, depth, veinTex) {
     return(obstacle);
 }
 
-export function getMaze(veinTex){      
+export function getMaze(veinTex){
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
   room.add(temp);
