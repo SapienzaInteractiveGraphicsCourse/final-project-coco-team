@@ -2,9 +2,9 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
 export function init(roomTexture){
-  
-  
-  var scene,camera;
+
+
+  var scene,camera,camera2;
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
 
@@ -14,6 +14,9 @@ export function init(roomTexture){
   camera.position.y = 0;
   camera.position.z = 50;
 
+  camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera2.position.copy(camera.position);
+
   const light = new THREE.PointLight( 0xffffff, 4, 1500 );
   light.position.set(0, 1000, 0);
   const light1 = new THREE.PointLight( 0xffffff, 4, 200 );
@@ -21,7 +24,7 @@ export function init(roomTexture){
   scene.add(light);
   scene.add(light1);
 
-  var room_mesh=room.getMaze(roomTexture);
+  var room_mesh = room.getMaze(roomTexture);
   scene.add(room_mesh);
 
   const geometry = new THREE.BoxGeometry(20, 80, 20);
@@ -30,5 +33,5 @@ export function init(roomTexture){
   cubeMesh.position.y=geometry.parameters.height/2;
   scene.add(cubeMesh);
 
-  return [scene,camera,cubeMesh];
+  return [scene,camera,cubeMesh,camera2];
 }

@@ -17,6 +17,10 @@ https://codepen.io/bbx/pen/EpLobJ?editors=0010
 ---- Text
 https://threejs.org/docs/#api/en/geometries/TextGeometry
 
+---- Move agent with keyboards, camera follows
+https://jsfiddle.net/a2nhdqsg/
+
+
 ---TODOLIST
 importazione uomo
 collisione oggetti
