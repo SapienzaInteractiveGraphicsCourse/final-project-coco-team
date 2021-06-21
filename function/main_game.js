@@ -1,5 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-export function init(){
+import * as room from "./room.js";
+
+export function init(roomTexture){
   var scene,camera;
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
@@ -16,6 +18,9 @@ export function init(){
   light1.position.set(0, -50, 0);
   scene.add(light);
   scene.add(light1);
+
+  var room_mesh=room.getMaze(roomTexture);
+  scene.add(room_mesh);
 
   return [scene,camera];
 }

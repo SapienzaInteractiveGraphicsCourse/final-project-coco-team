@@ -54,7 +54,7 @@ function init() {
   ButtonArrayId = temp [2];
 
 /*---------------------------MAIN SCENE STUFF---------------------------*/
-  temp = main_game.init();
+  temp = main_game.init(roomTexture);
   scene = temp[0];
   camera = temp [1];
 
@@ -68,6 +68,7 @@ function init() {
   raycaster=new THREE.Raycaster();
 
   document.addEventListener( 'mousemove', onPointerMove );
+  document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
 
   window.requestAnimationFrame(animate);
@@ -89,6 +90,24 @@ function onPointerMove( event ) {
   pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
+}
+
+function onMouseClick( event ) {
+  switch(stato) {
+    case 0:
+      if(INTERSECTED!=null){
+        if (INTERSECTED.uuid == ButtonArrayId[0])
+          stato=1;
+        if (INTERSECTED.uuid == ButtonArrayId[1])
+          console.log("Option");
+      }
+      break;
+    case 1:
+      renderer.render( scene, camera );
+      break;
+    default:
+      console.log("pippo");
+  }
 }
 
 function animate() {
@@ -122,7 +141,6 @@ function update(){
           INTERSECTED = intersects[ 0 ].object;
           INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
           INTERSECTED.material.emissive.setHex( 0xff0000 );
-          console.log(INTERSECTED.uuid);
         }
       }
 
@@ -135,8 +153,6 @@ function update(){
 
       break;
     case 1:
-      break;
-    case 2:
       break;
     default:
       console.log("pippo");

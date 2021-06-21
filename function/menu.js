@@ -31,31 +31,6 @@ export function init(font,roomTexture){
   title.position.y += 24;
   scene.add(title);
 
-/*---------------------------OPTION BUTTON STUFF---------------------------*/
-  const option_button_material = material_1.clone();
-  option_button_material.needsUpdate=true;
-  const option_button_geometry = new THREE.BoxGeometry(50, 10, 10);
-  const option_button_mesh = new THREE.Mesh( option_button_geometry, option_button_material);
-  option_button_mesh.position.y-=10;
-  ButtonArray.push(option_button_mesh.uuid);
-  scene.add(option_button_mesh);
-
-  const option_text_material = material_2.clone();
-  option_text_material.needsUpdate=true;
-  const option_text_geometry = new THREE.TextGeometry( 'OPTION', {
-    font:font,
-    size: 5,
-    height: 1,
-    curveSegments: 20
-  });
-  const option_text_mesh=new THREE.Mesh( option_text_geometry, option_text_material);
-  option_text_mesh.geometry.computeBoundingBox();
-  option_text_mesh.position.x -= (option_text_mesh.geometry.boundingBox.max.x-option_text_mesh.geometry.boundingBox.min.x)/2;
-  option_text_mesh.position.y -= (option_text_mesh.geometry.boundingBox.max.y-option_text_mesh.geometry.boundingBox.min.y)/2;
-  option_text_mesh.position.y -= 10;
-  option_text_mesh.position.z += 5;
-  scene.add(option_text_mesh);
-
 /*---------------------------START BUTTON STUFF---------------------------*/
   const start_button_material = material_1.clone();
   start_button_material.needsUpdate=true;
@@ -80,6 +55,32 @@ export function init(font,roomTexture){
   start_text_mesh.position.y += 10;
   start_text_mesh.position.z += 5;
   scene.add(start_text_mesh);
+
+
+/*---------------------------OPTION BUTTON STUFF---------------------------*/
+  const option_button_material = material_1.clone();
+  option_button_material.needsUpdate=true;
+  const option_button_geometry = new THREE.BoxGeometry(50, 10, 10);
+  const option_button_mesh = new THREE.Mesh( option_button_geometry, option_button_material);
+  option_button_mesh.position.y-=10;
+  ButtonArray.push(option_button_mesh.uuid);
+  scene.add(option_button_mesh);
+
+  const option_text_material = material_2.clone();
+  option_text_material.needsUpdate=true;
+  const option_text_geometry = new THREE.TextGeometry( 'OPTION', {
+    font:font,
+    size: 5,
+    height: 1,
+    curveSegments: 20
+  });
+  const option_text_mesh=new THREE.Mesh( option_text_geometry, option_text_material);
+  option_text_mesh.geometry.computeBoundingBox();
+  option_text_mesh.position.x -= (option_text_mesh.geometry.boundingBox.max.x-option_text_mesh.geometry.boundingBox.min.x)/2;
+  option_text_mesh.position.y -= (option_text_mesh.geometry.boundingBox.max.y-option_text_mesh.geometry.boundingBox.min.y)/2;
+  option_text_mesh.position.y -= 10;
+  option_text_mesh.position.z += 5;
+  scene.add(option_text_mesh);
 
 /*---------------------------LIGHT STUFF---------------------------*/
   const light = new THREE.PointLight( 0xffffff, 2, 200 );
