@@ -1,33 +1,57 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import {OrbitControls} from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-import * as virus from "./function/virus.js";
+import * as MODEL from "./function/model.js";
 import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";
 import * as room from "./function/room.js";
-import * as syringe from "./function/syringe.js";
 
+//resource that has to be loaded
+var virusMesh,roomTexture,syringeMesh,font;
 
 var camera, scene, renderer, controls;
 var scene_menu,camera_menu;
+
 var stato;
-var pointer;
+var pointer,raycaster,INTERSECTED;
 
-init();
+var ButtonArrayId;
 
+loader();
+
+/*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
+function loader(){
+  var virusMeshPromise = MODEL.getVirusMesh();
+  var roomTexturePromise = MODEL.getTexture();
+  var syringePromise = MODEL.getSyringeMesh();
+  var fontPromise = MODEL.getFont();
+  Promise.all([virusMeshPromise, roomTexturePromise,syringePromise,fontPromise]).then(
+    data => {
+    virusMesh = data[0];
+    roomTexture = data[1];
+    syringeMesh=data[2];
+    font=data[3];
+    init();
+  },error => {
+    console.log( 'An error happened:',error );
+  });
+}
+
+/*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
-  stato=1;
+  stato=0;
 
   pointer = new THREE.Vector2();
 
   renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  document.body.appendChild( renderer.domElement );
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
 /*---------------------------MAIN MENU STUFF---------------------------*/
-  var temp = menu.init();
+  var temp = menu.init(font,roomTexture);
   scene_menu = temp[0];
   camera_menu = temp [1];
+  ButtonArrayId = temp [2];
 
 /*---------------------------MAIN SCENE STUFF---------------------------*/
   temp = main_game.init();
@@ -41,51 +65,29 @@ function init() {
   controls.maxPolarAngle = Math.PI / 2;
   controls.enableDamping = true;
 
-  var virusMesh;
-  var virusMeshPromise = virus.getVirusMesh();
-  virusMeshPromise.then(
-  function (resolve) {
-    virusMesh=resolve;
-    scene.add(virusMesh);
-  },
-  function (error) {
-    console.log( 'An error happened:',error );
-  });
+  raycaster=new THREE.Raycaster();
 
-  var roomTexture;
-  var room1;
-  var roomTexturePromise = room.getTexture();
-  roomTexturePromise.then(
-  function (resolve) {
-    roomTexture=resolve;
-    room1=room.getLevel(roomTexture);
-    scene.add(room1);
-  },
-  function (error) {
-    console.log( 'An error happened:',error );
-  });
-
-  var syringe1;
-  var syringeloaderPromise = syringe.getSyringeMesh();
-  syringeloaderPromise.then(
-  function (resolve) {
-    syringe1=resolve;
-    scene.add(syringe1);
-  },
-  function (error) {
-    console.log( 'An error happened:',error );
-  });
+  document.addEventListener( 'mousemove', onPointerMove );
+  window.addEventListener('resize', onWindowResize);
 
   window.requestAnimationFrame(animate);
-
 }
 
 function onWindowResize() {
-
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
+  camera_menu.aspect = window.innerWidth / window.innerHeight;
+  camera_menu.updateProjectionMatrix();
+
   renderer.setSize( window.innerWidth, window.innerHeight );
+  window.requestAnimationFrame(animate);
+}
+
+function onPointerMove( event ) {
+
+  pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
 }
 
@@ -111,15 +113,35 @@ function render(){
 function update(){
   switch(stato) {
     case 0:
-      renderer.render( scene_menu, camera_menu );
+      raycaster.setFromCamera( pointer, camera_menu );
+      const intersects = raycaster.intersectObjects( scene_menu.children);
+
+      if ( intersects.length > 0 ) {
+        if ( INTERSECTED != intersects[ 0 ].object && ButtonArrayId.includes(intersects[ 0 ].object.uuid)) {
+          if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+          INTERSECTED = intersects[ 0 ].object;
+          INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+          INTERSECTED.material.emissive.setHex( 0xff0000 );
+          console.log(INTERSECTED.uuid);
+        }
+      }
+
+      else {
+        if ( INTERSECTED ) {
+          INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+        }
+        INTERSECTED = null;
+      }
+
       break;
     case 1:
-      renderer.render( scene, camera );
+      break;
+    case 2:
       break;
     default:
       console.log("pippo");
   }
 }
 
-window.addEventListener('resize', onWindowResize);
+
 
