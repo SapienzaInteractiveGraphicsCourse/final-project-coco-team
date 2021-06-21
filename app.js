@@ -16,6 +16,8 @@ var pointer,raycaster,INTERSECTED;
 
 var ButtonArrayId;
 
+var player;
+
 loader();
 
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
@@ -38,7 +40,7 @@ function loader(){
 
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
-  stato=0;
+  stato=1;
 
   pointer = new THREE.Vector2();
 
@@ -57,6 +59,7 @@ function init() {
   temp = main_game.init(roomTexture);
   scene = temp[0];
   camera = temp [1];
+  player = temp[2];
 
 /*--------------------------------CONTROL-------------------------------*/
   controls = new OrbitControls(camera, renderer.domElement);

@@ -60,7 +60,6 @@ export function getRoom (width, height, depth, veinTex) {
 
     room.add(base, wall1, wall2, wall3, wall4);
     //room.translateX(100)
-    room.translateY(-25);
     return(room);
 }
 
@@ -90,7 +89,6 @@ export function getObstacle (width, height, depth, veinTex) {
     const obstacle = new THREE.Mesh( geometry, material);
     obstacle.position.y=height/2;
 
-    obstacle.translateY(-25);
     return(obstacle);
 }
 

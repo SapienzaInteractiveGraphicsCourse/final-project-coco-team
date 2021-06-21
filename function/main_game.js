@@ -2,6 +2,8 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
 export function init(roomTexture){
+  
+  
   var scene,camera;
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
@@ -22,5 +24,11 @@ export function init(roomTexture){
   var room_mesh=room.getMaze(roomTexture);
   scene.add(room_mesh);
 
-  return [scene,camera];
+  const geometry = new THREE.BoxGeometry(20, 80, 20);
+  const material_0 = new THREE.MeshPhongMaterial( { color: 0x00f0f0 });
+  var cubeMesh = new THREE.Mesh( geometry, material_0);
+  cubeMesh.position.y=geometry.parameters.height/2;
+  scene.add(cubeMesh);
+
+  return [scene,camera,cubeMesh];
 }
