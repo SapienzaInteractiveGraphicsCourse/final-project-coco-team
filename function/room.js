@@ -65,51 +65,31 @@ export function getRoom (width, height, depth, veinTex) {
 }
 
 export function getObstacle (width, height, depth, veinTex) {
-    var mesh = new THREE.Mesh();
-    var obstacle = new THREE.Group();
     veinTex.wrapS = THREE.RepeatWrapping;
     veinTex.wrapT = THREE.RepeatWrapping;
-    var tex_base=veinTex.clone();
-    tex_base.needsUpdate = true;
-    var tex_wall12=veinTex.clone(true);
-    tex_wall12.needsUpdate = true;
-    var tex_wall34=veinTex.clone(true);
-    tex_wall34.needsUpdate = true;
 
-    tex_base.repeat.set(width/width*5,depth/width*5);
-    tex_wall12.repeat.set(depth/height*3,height/height*3);
-    tex_wall34.repeat.set(width/height*3,height/height*3);
+    var tex_0=veinTex.clone();
+    tex_0.needsUpdate = true;
+    var tex_1=veinTex.clone(true);
+    tex_1.needsUpdate = true;
+    var tex_2=veinTex.clone(true);
+    tex_2.needsUpdate = true;
 
-    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_base, bumpMap: tex_base } );
-    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall12, bumpMap: tex_wall12 } );
-    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall34, bumpMap: tex_wall34 } );
+    tex_0.repeat.set(width/height*5,depth/height*5);
+    tex_1.repeat.set(depth/height*3,height/height*3);
+    tex_2.repeat.set(width/height*3,height/height*3);
 
-    var base_width = width;
-    var base_height = 0.1;
-    var base_depth = depth;
-    const geometry_1 = new THREE.BoxGeometry(base_width, base_height, base_depth);
+    const material_0 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_0, bumpMap: tex_0 } );
+    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_1, bumpMap: tex_1 } );
+    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_2, bumpMap: tex_2 } );
 
-    const top = new THREE.Mesh( geometry_1, material_base);
-    top.position.set(0.0, height, 0.0);
+    var material=[material_1,material_1,material_0,material_0,material_2,material_2];
 
-    var wall_width = base_height;
-    var wall_height =  height;
-    var wall_depth = base_depth;
-    const geometry_2 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
-    const wall1 = new THREE.Mesh( geometry_2, material_1);
-    const wall2 = new THREE.Mesh( geometry_2, material_1);
-    wall1.position.set(-(base_width/2 - wall_width/2), (wall_height/2 + base_height/2), 0.0);
-    wall2.position.set((base_width/2 - wall_width/2), (wall_height/2 + base_height/2), 0.0);
+    const geometry = new THREE.BoxGeometry(width, height, depth);
 
-    wall_width = base_width;
-    wall_depth = base_height;
-    const geometry_3 = new THREE.BoxGeometry(wall_width, wall_height, wall_depth);
-    const wall3 = new THREE.Mesh( geometry_3, material_2);
-    const wall4 = new THREE.Mesh( geometry_3, material_2);
-    wall3.position.set(0.0, wall_height/2 + base_height/2, -(wall_depth/2 - base_depth/2));
-    wall4.position.set(0.0, wall_height/2 + base_height/2, (wall_depth/2 - base_depth/2));
+    const obstacle = new THREE.Mesh( geometry, material);
+    obstacle.position.y=height/2;
 
-    obstacle.add(wall1, wall2, wall3, wall4, top);
     obstacle.translateY(-25);
     return(obstacle);
 }
