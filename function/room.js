@@ -28,9 +28,9 @@ export function getRoom (width, height, depth, veinTex) {
     tex_wall12.repeat.set(depth/height*3,height/height*3);
     tex_wall34.repeat.set(width/height*3,height/height*3);
 
-    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_base, bumpMap: tex_base } );
-    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall12, bumpMap: tex_wall12 } );
-    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_wall34, bumpMap: tex_wall34 } );
+    const material_base = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_base,*/ bumpMap: tex_base } );
+    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_wall12,*/ bumpMap: tex_wall12 } );
+    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_wall34,*/ bumpMap: tex_wall34 } );
 
     var base_width = width;
     var base_height = 0.1;
@@ -78,9 +78,9 @@ export function getObstacle (width, height, depth, veinTex) {
     tex_1.repeat.set(depth/height*5,height/height*5);
     tex_2.repeat.set(width/height*5,height/height*5);
 
-    const material_0 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_0, bumpMap: tex_0 } );
-    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_1, bumpMap: tex_1 } );
-    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, map: tex_2, bumpMap: tex_2 } );
+    const material_0 = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_0,*/ bumpMap: tex_0 } );
+    const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_1,*/ bumpMap: tex_1 } );
+    const material_2 = new THREE.MeshPhongMaterial( { color: 0x800000, /*map: tex_2,*/ bumpMap: tex_2 } );
 
     var material=[material_1,material_1,material_0,material_0,material_2,material_2];
 

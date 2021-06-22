@@ -4,18 +4,19 @@ import * as room from "./room.js";
 export function init(roomTexture){
 
 
-  var scene,camera,camera2;
+  var scene,camera;
+  //,camera2;
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
 
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-  camera.position.y = 0;
-  camera.position.z = 50;
+  camera.position.set(0,40,50);
+  //camera.rotation.x=-Math.atan((camera.position.y-40)/camera.position.z);
 
-  camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera2.position.copy(camera.position);
+  //camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+  //camera2.position.copy(camera.position);
 
   const light = new THREE.PointLight( 0xffffff, 4, 1500 );
   light.position.set(0, 1000, 0);
@@ -33,5 +34,6 @@ export function init(roomTexture){
   cubeMesh.position.y=geometry.parameters.height/2;
   scene.add(cubeMesh);
 
-  return [scene,camera,cubeMesh,camera2];
+  return [scene,camera,cubeMesh];
+  //return [scene,camera,cubeMesh,camera2];
 }

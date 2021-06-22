@@ -8,7 +8,8 @@ import * as room from "./function/room.js";
 //resource that has to be loaded
 var virusMesh,roomTexture,syringeMesh,font;
 
-var camera, scene, renderer, controls, camera2;
+var camera, scene, renderer, controls;
+//, camera2;
 var scene_menu,camera_menu;
 
 var stato;
@@ -61,14 +62,16 @@ function init() {
   scene = temp[0];
   camera = temp [1];
   player = temp[2];
-  camera2 = temp[3];
+  //camera2 = temp[3];
 
 /*--------------------------------CONTROL-------------------------------*/
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(4.5, 0, 4.5);
-  controls.enablePan = false;
-  controls.maxPolarAngle = Math.PI / 2;
-  controls.enableDamping = true;
+  //controls = new OrbitControls(camera, renderer.domElement);
+  //controls.target.set(4.5, 40, 4.5);
+  //controls.enablePan = false;
+  //controls.minPolarAngle = Math.PI / 3
+  //controls.maxPolarAngle = Math.PI / 3;
+  //controls.enableDamping = true;
+  //controls.enableRotate = false;
 
   raycaster=new THREE.Raycaster();
 
@@ -78,12 +81,17 @@ function init() {
   window.addEventListener('keydown', moveAgent, false);
 
   window.requestAnimationFrame(animate);
+  console.log(camera.rotation);
 }
 
 function moveAgent(e) {
 
-  var dirZ = new THREE.Vector3( 0, 0, -1 );
-  var dirX = new THREE.Vector3( -1, 0, 0 );
+  var dirZ = new THREE.Vector3( 0, 0, -2 );
+  var dirX = new THREE.Vector3( -2, 0, 0 );
+  var cameraPosition = new THREE.Vector3( 0, 20, 50 );
+  var newVector;
+
+  //rotazione movimenti
   dirZ.applyQuaternion( player.quaternion );
   dirX.applyQuaternion( player.quaternion );
 
@@ -95,36 +103,69 @@ function moveAgent(e) {
   	case 'w':
     	player.position.add( dirZ );
       camera.position.add( dirZ );
-      controls.target.copy( player.position );
+      //console.log(camera.position);
+      //console.log(player.position);
+      //controls.target.copy( player.position );
       break;
 
     case 's':
     	player.position.sub( dirZ );
       camera.position.sub( dirZ );
-      controls.target.copy( player.position );
+      //controls.target.copy( player.position );
       break;
 
     case 'a':
       player.position.add( dirX );
       camera.position.add( dirX );
-      controls.target.copy( player.position );
+      //controls.target.copy( player.position );
       break;
 
     case 'd':
       player.position.sub( dirX );
       camera.position.sub( dirX );
-      controls.target.copy( player.position );
+      //controls.target.copy( player.position );
       break;
 
-    case 'l':
+/*----------------------------ROTATION----------------------------*/
+    case 'q':
       player.rotation.y += Math.PI/30;
-      //camera.rotation.y = player.rotation.y;
-      //camera.quaternion.rotateTowards(player.quaternion, 0.5*Math.PI/30);
+      //rotazione camera
+      //camera.rotation.y += Math.PI/30;
+      camera.quaternion.copy(player.quaternion);
+      //camera.rotation.x= (-Math.atan((camera.position.y-40)/50));
+      console.log(camera.rotation);
+      //traslazione camera
+      cameraPosition.applyQuaternion(player.quaternion);
+      camera.position.copy(player.position);
+      camera.position.add(cameraPosition);
+      console.log(cameraPosition);
+      /*
+      player.rotation.y += Math.PI/30;
+
+      cameraPosition.applyQuaternion( player.quaternion );
+    //  camera.rotation.x += Math.PI/30;
+    //  camera.rotation.y = player.rotation.y;
+      camera.quaternion.rotateTowards(player.quaternion, Math.PI/30);
+      console.log(camera.position);
+      console.log(player.position);
+      //console.log(player.position.add(cameraPosition))
+
+      camera.position.copy(player.position);
+      camera.position.add(cameraPosition);
+    //camera.quaternion = player.quaternion;
+      */
       break;
 
-    case 'r':
+    case 'e':
       player.rotation.y -= Math.PI/30;
-      //camera.rotation.y = player.rotation.y;
+      //rotazione camera
+      camera.quaternion.copy(player.quaternion);
+      camera.rotation.x= (-Math.atan((camera.position.y-40)/50));
+      //traslazione camera
+      cameraPosition.applyQuaternion(player.quaternion);
+      camera.position.copy(player.position);
+      camera.position.add(cameraPosition);
+      console.log(cameraPosition)
       break;
 
 
@@ -139,13 +180,13 @@ function onWindowResize() {
 
   camera_menu.aspect = window.innerWidth / window.innerHeight;
   camera_menu.updateProjectionMatrix();
-
+  /*
   insetWidth = window.innerHeight / 4; // square
   insetHeight = window.innerHeight / 4;
 
   camera2.aspect = insetWidth / insetHeight;
   camera2.updateProjectionMatrix();
-
+  */
   renderer.setSize( window.innerWidth, window.innerHeight );
   window.requestAnimationFrame(animate);
 }
@@ -174,6 +215,8 @@ function onMouseClick( event ) {
       console.log("pippo");
   }
 }
+
+/*
 // QUESTA FUNZIONE animate E' SOSTITUTIVA A QUELLA CHE AVEVI SCRITTO TU (CHE E' COMMENTATA SOTTO)
 // STA FUNZIONE HA DEI COMANDI ESSENZIALI PERCHE' HO PROVATO A COMMENTARLI MA POI
 // SI ROMPE IL FATTO CHE LA CAMERA SEGUE IL PLAYER CHE SI MUOVE
@@ -187,27 +230,28 @@ function animate() {
   renderer.render(scene, camera);
 
 	// inset scene
-  renderer.clearDepth(); // important!
-  renderer.setScissorTest(true);
-  renderer.setScissor(20, 20, insetWidth, insetHeight);
-  renderer.setViewport(20, 20, insetWidth, insetHeight);
-  renderer.setClearColor( 0x222222, 1 );
+  //renderer.clearDepth(); // important!
+  //renderer.setScissorTest(true);
+  //renderer.setScissor(20, 20, insetWidth, insetHeight);
+  //renderer.setViewport(20, 20, insetWidth, insetHeight);
+  //renderer.setClearColor( 0x222222, 1 );
 
-  camera2.position.copy( player.position );
-  camera2.quaternion.copy( player.quaternion );
+  //camera2.position.copy( player.position );
+  //camera2.quaternion.copy( player.quaternion );
 
-  renderer.render(scene, camera2);
+  //renderer.render(scene, camera2);
 
-  renderer.setScissorTest(false);
+  //renderer.setScissorTest(false);
 
 }
+*/
 
-// function animate() {
-//   requestAnimationFrame( animate );
-//   //setupKeyControls();
-//   render();
-//   update();
-// }
+ function animate() {
+   requestAnimationFrame( animate );
+   //controls.setupKeyControls=true;
+   render();
+   update();
+ }
 
 
 function render(){
@@ -217,6 +261,8 @@ function render(){
       break;
     case 1:
       renderer.render( scene, camera );
+      //controls.update();
+      //camera.update=true;
       break;
     default:
       console.log("pippo");
