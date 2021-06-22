@@ -19,6 +19,7 @@ var ButtonArrayId;
 
 var player;
 var insetWidth, insetHeight;
+var w_enabled,a_enabled,s_enabled,d_enabled,q_enabled,e_enabled;
 
 loader();
 
@@ -43,6 +44,13 @@ function loader(){
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
   stato=1;
+
+  q_enabled=false;
+  w_enabled=false;
+  e_enabled=false;
+  a_enabled=false;
+  s_enabled=false;
+  d_enabled=false;
 
   pointer = new THREE.Vector2();
 
@@ -78,18 +86,68 @@ function init() {
   document.addEventListener( 'mousemove', onPointerMove );
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
-  window.addEventListener('keydown', moveAgent, false);
+  window.addEventListener('keydown', keypressedAgent, false);
+  window.addEventListener('keyup', keyreleasedAgent, false);
 
   window.requestAnimationFrame(animate);
-  console.log(camera.rotation);
 }
 
-function moveAgent(e) {
+function keypressedAgent(event) {
+  switch(event.key) {
+    case 'q':
+      q_enabled=true;
+      break;
+    case 'w':
+      w_enabled=true;
+      break;
+    case 'e':
+      e_enabled=true;
+      break;
+    case 'a':
+      a_enabled=true;
+      break;
+    case 's':
+      s_enabled=true;
+      break;
+    case 'd':
+      d_enabled=true;
+      break;
+  }
+}
+
+function keyreleasedAgent(event) {
+  switch(event.key) {
+    case 'q':
+      q_enabled=false;
+      break;
+    case 'w':
+      w_enabled=false;
+      break;
+    case 'e':
+      e_enabled=false;
+      break;
+    case 'a':
+      a_enabled=false;
+      break;
+    case 's':
+      s_enabled=false;
+      break;
+    case 'd':
+      d_enabled=false;
+      break;
+  }
+}
+
+/*
+function keypressedAgent2(event) {
 
   var dirZ = new THREE.Vector3( 0, 0, -2 );
   var dirX = new THREE.Vector3( -2, 0, 0 );
   var cameraPosition = new THREE.Vector3( 0, 20, 50 );
-  var newVector;
+  var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
+  var quaternion = new THREE.Quaternion();
+  quaternion.setFromEuler(camera_Incline);
+
 
   //rotazione movimenti
   dirZ.applyQuaternion( player.quaternion );
@@ -98,9 +156,10 @@ function moveAgent(e) {
   // var y_axis = new THREE.Vector3( 0, 1, 0 );
   // var quaternion = new THREE.Quaternion;
 
-	switch(e.key) {
+	switch(event.key) {
 
   	case 'w':
+      w_enabled=true;
     	player.position.add( dirZ );
       camera.position.add( dirZ );
       //console.log(camera.position);
@@ -126,14 +185,12 @@ function moveAgent(e) {
       //controls.target.copy( player.position );
       break;
 
-/*----------------------------ROTATION----------------------------*/
+/*----------------------------ROTATION----------------------------
     case 'q':
       player.rotation.y += Math.PI/30;
       //rotazione camera
-      //camera.rotation.y += Math.PI/30;
       camera.quaternion.copy(player.quaternion);
-      //camera.rotation.x= (-Math.atan((camera.position.y-40)/50));
-      console.log(camera.rotation);
+      camera.quaternion.multiply(quaternion);
       //traslazione camera
       cameraPosition.applyQuaternion(player.quaternion);
       camera.position.copy(player.position);
@@ -153,26 +210,26 @@ function moveAgent(e) {
       camera.position.copy(player.position);
       camera.position.add(cameraPosition);
     //camera.quaternion = player.quaternion;
-      */
+      
       break;
 
     case 'e':
       player.rotation.y -= Math.PI/30;
       //rotazione camera
       camera.quaternion.copy(player.quaternion);
-      camera.rotation.x= (-Math.atan((camera.position.y-40)/50));
+      camera.quaternion.multiply(quaternion);
       //traslazione camera
       cameraPosition.applyQuaternion(player.quaternion);
       camera.position.copy(player.position);
       camera.position.add(cameraPosition);
-      console.log(cameraPosition)
+      //console.log(cameraPosition);
       break;
 
 
 
   }
 
-}
+}*/
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -246,9 +303,8 @@ function animate() {
 }
 */
 
- function animate() {
+function animate() {
    requestAnimationFrame( animate );
-   //controls.setupKeyControls=true;
    render();
    update();
  }
@@ -261,8 +317,6 @@ function render(){
       break;
     case 1:
       renderer.render( scene, camera );
-      //controls.update();
-      //camera.update=true;
       break;
     default:
       console.log("pippo");
@@ -293,6 +347,62 @@ function update(){
 
       break;
     case 1:
+      var dirZ = new THREE.Vector3( 0, 0, -2 );
+      var dirX = new THREE.Vector3( -2, 0, 0 );
+      var cameraPosition = new THREE.Vector3( 0, 20, 50 );
+      var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
+      var quaternion = new THREE.Quaternion();
+      quaternion.setFromEuler(camera_Incline);
+
+      //rotazione movimenti
+      dirZ.applyQuaternion( player.quaternion );
+      dirX.applyQuaternion( player.quaternion );
+      if (q_enabled){
+        //player rotation
+        player.rotation.y += Math.PI/30;
+        //camera rotation
+        camera.quaternion.copy(player.quaternion);
+        camera.quaternion.multiply(quaternion);
+        //camera translation
+        cameraPosition.applyQuaternion(player.quaternion);
+        camera.position.copy(player.position);
+        camera.position.add(cameraPosition);
+      }
+      if (w_enabled){
+        //player translation
+        player.position.add( dirZ );
+        //camera translation
+        camera.position.add( dirZ );
+      }
+      if (e_enabled){
+        //player rotation
+        player.rotation.y -= Math.PI/30;
+        //camera rotation
+        camera.quaternion.copy(player.quaternion);
+        camera.quaternion.multiply(quaternion);
+        //camera translation
+        cameraPosition.applyQuaternion(player.quaternion);
+        camera.position.copy(player.position);
+        camera.position.add(cameraPosition);
+      }
+      if (a_enabled){
+        //player translation
+        player.position.add( dirX );
+        //camera translation
+        camera.position.add( dirX );
+      }
+      if (s_enabled){
+        //player translation
+        player.position.sub( dirZ );
+        //camera translation
+        camera.position.sub( dirZ );
+      }
+      if (d_enabled){
+        //player translation
+        player.position.sub( dirX );
+        //camera translation
+        camera.position.sub( dirX );
+      }
       break;
     default:
       console.log("pippo");
