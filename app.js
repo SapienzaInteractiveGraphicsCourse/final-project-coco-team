@@ -9,7 +9,7 @@ import * as room from "./function/room.js";
 var virusMesh,roomTexture,syringeMesh,font;
 
 var camera, scene, renderer, controls;
-//, camera2;
+
 var scene_menu,camera_menu;
 
 var stato;
@@ -138,112 +138,13 @@ function keyreleasedAgent(event) {
   }
 }
 
-/*
-function keypressedAgent2(event) {
-
-  var dirZ = new THREE.Vector3( 0, 0, -2 );
-  var dirX = new THREE.Vector3( -2, 0, 0 );
-  var cameraPosition = new THREE.Vector3( 0, 20, 50 );
-  var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
-  var quaternion = new THREE.Quaternion();
-  quaternion.setFromEuler(camera_Incline);
-
-
-  //rotazione movimenti
-  dirZ.applyQuaternion( player.quaternion );
-  dirX.applyQuaternion( player.quaternion );
-
-  // var y_axis = new THREE.Vector3( 0, 1, 0 );
-  // var quaternion = new THREE.Quaternion;
-
-	switch(event.key) {
-
-  	case 'w':
-      w_enabled=true;
-    	player.position.add( dirZ );
-      camera.position.add( dirZ );
-      //console.log(camera.position);
-      //console.log(player.position);
-      //controls.target.copy( player.position );
-      break;
-
-    case 's':
-    	player.position.sub( dirZ );
-      camera.position.sub( dirZ );
-      //controls.target.copy( player.position );
-      break;
-
-    case 'a':
-      player.position.add( dirX );
-      camera.position.add( dirX );
-      //controls.target.copy( player.position );
-      break;
-
-    case 'd':
-      player.position.sub( dirX );
-      camera.position.sub( dirX );
-      //controls.target.copy( player.position );
-      break;
-
-/*----------------------------ROTATION----------------------------
-    case 'q':
-      player.rotation.y += Math.PI/30;
-      //rotazione camera
-      camera.quaternion.copy(player.quaternion);
-      camera.quaternion.multiply(quaternion);
-      //traslazione camera
-      cameraPosition.applyQuaternion(player.quaternion);
-      camera.position.copy(player.position);
-      camera.position.add(cameraPosition);
-      console.log(cameraPosition);
-      /*
-      player.rotation.y += Math.PI/30;
-
-      cameraPosition.applyQuaternion( player.quaternion );
-    //  camera.rotation.x += Math.PI/30;
-    //  camera.rotation.y = player.rotation.y;
-      camera.quaternion.rotateTowards(player.quaternion, Math.PI/30);
-      console.log(camera.position);
-      console.log(player.position);
-      //console.log(player.position.add(cameraPosition))
-
-      camera.position.copy(player.position);
-      camera.position.add(cameraPosition);
-    //camera.quaternion = player.quaternion;
-      
-      break;
-
-    case 'e':
-      player.rotation.y -= Math.PI/30;
-      //rotazione camera
-      camera.quaternion.copy(player.quaternion);
-      camera.quaternion.multiply(quaternion);
-      //traslazione camera
-      cameraPosition.applyQuaternion(player.quaternion);
-      camera.position.copy(player.position);
-      camera.position.add(cameraPosition);
-      //console.log(cameraPosition);
-      break;
-
-
-
-  }
-
-}*/
-
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
   camera_menu.aspect = window.innerWidth / window.innerHeight;
   camera_menu.updateProjectionMatrix();
-  /*
-  insetWidth = window.innerHeight / 4; // square
-  insetHeight = window.innerHeight / 4;
 
-  camera2.aspect = insetWidth / insetHeight;
-  camera2.updateProjectionMatrix();
-  */
   renderer.setSize( window.innerWidth, window.innerHeight );
   window.requestAnimationFrame(animate);
 }
@@ -272,36 +173,6 @@ function onMouseClick( event ) {
       console.log("pippo");
   }
 }
-
-/*
-// QUESTA FUNZIONE animate E' SOSTITUTIVA A QUELLA CHE AVEVI SCRITTO TU (CHE E' COMMENTATA SOTTO)
-// STA FUNZIONE HA DEI COMANDI ESSENZIALI PERCHE' HO PROVATO A COMMENTARLI MA POI
-// SI ROMPE IL FATTO CHE LA CAMERA SEGUE IL PLAYER CHE SI MUOVE
-function animate() {
-
-  requestAnimationFrame(animate);
-
-  // main scene
-	renderer.setClearColor( 0x000000, 0 );
-  renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-  renderer.render(scene, camera);
-
-	// inset scene
-  //renderer.clearDepth(); // important!
-  //renderer.setScissorTest(true);
-  //renderer.setScissor(20, 20, insetWidth, insetHeight);
-  //renderer.setViewport(20, 20, insetWidth, insetHeight);
-  //renderer.setClearColor( 0x222222, 1 );
-
-  //camera2.position.copy( player.position );
-  //camera2.quaternion.copy( player.quaternion );
-
-  //renderer.render(scene, camera2);
-
-  //renderer.setScissorTest(false);
-
-}
-*/
 
 function animate() {
    requestAnimationFrame( animate );
