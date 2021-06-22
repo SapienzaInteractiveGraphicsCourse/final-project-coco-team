@@ -9,7 +9,6 @@ import * as room from "./function/room.js";
 var virusMesh,roomTexture,syringeMesh,font;
 
 var camera, scene, renderer, controls;
-
 var scene_menu,camera_menu;
 
 var stato;
@@ -18,8 +17,12 @@ var pointer,raycaster,INTERSECTED;
 var ButtonArrayId;
 
 var player;
-var insetWidth, insetHeight;
-var w_enabled,a_enabled,s_enabled,d_enabled,q_enabled,e_enabled;
+var cameraTranslation;
+var enabled;
+
+var RayCasterArray;
+
+var line;
 
 loader();
 
@@ -44,13 +47,14 @@ function loader(){
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
   stato=1;
-
-  q_enabled=false;
-  w_enabled=false;
-  e_enabled=false;
-  a_enabled=false;
-  s_enabled=false;
-  d_enabled=false;
+  enabled={
+    "q":false,
+    "w":false,
+    "e":false,
+    "a":false,
+    "s":false,
+    "d":false,
+  };
 
   pointer = new THREE.Vector2();
 
@@ -70,47 +74,59 @@ function init() {
   scene = temp[0];
   camera = temp [1];
   player = temp[2];
-  //camera2 = temp[3];
+  cameraTranslation = temp[3];
+  console.log(cameraTranslation);
 
-/*--------------------------------CONTROL-------------------------------*/
-  //controls = new OrbitControls(camera, renderer.domElement);
-  //controls.target.set(4.5, 40, 4.5);
-  //controls.enablePan = false;
-  //controls.minPolarAngle = Math.PI / 3
-  //controls.maxPolarAngle = Math.PI / 3;
-  //controls.enableDamping = true;
-  //controls.enableRotate = false;
-
+/*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
 
+/*---------------------------PLAYER RAYCASTER---------------------------*/
+  RayCasterArray = [];
+  for (let x=0;x<9;x++){
+    let angle= -x*(Math.PI/4);
+    let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
+    let rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromEuler(rotationEuler);
+    let RayDirection = new THREE.Vector3( 1, 0, 0 );
+    RayDirection.applyQuaternion(rotationQuaternion);
+    let RayCasterElement = new THREE.Raycaster(player.position,RayDirection);
+    RayCasterArray.push(RayCasterElement);
+  }
+
+/*---------------------------EVENT LISTENER---------------------------*/
   document.addEventListener( 'mousemove', onPointerMove );
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown', keypressedAgent, false);
   window.addEventListener('keyup', keyreleasedAgent, false);
 
+/*---------------------------ANIMATION LOOP---------------------------*/
   window.requestAnimationFrame(animate);
 }
 
 function keypressedAgent(event) {
   switch(event.key) {
     case 'q':
-      q_enabled=true;
+      enabled[event.key]=true;
       break;
     case 'w':
-      w_enabled=true;
+      enabled[event.key]=true;
       break;
     case 'e':
-      e_enabled=true;
+      enabled[event.key]=true;
       break;
     case 'a':
-      a_enabled=true;
+      enabled[event.key]=true;
       break;
     case 's':
-      s_enabled=true;
+      enabled[event.key]=true;
       break;
     case 'd':
-      d_enabled=true;
+      enabled[event.key]=true;
+      break;
+    case 'l':
+      console.log(player.position)
+      console.log(RayCasterArray[0]);
       break;
   }
 }
@@ -118,22 +134,22 @@ function keypressedAgent(event) {
 function keyreleasedAgent(event) {
   switch(event.key) {
     case 'q':
-      q_enabled=false;
+      enabled[event.key]=false;
       break;
     case 'w':
-      w_enabled=false;
+      enabled[event.key]=false;
       break;
     case 'e':
-      e_enabled=false;
+      enabled[event.key]=false;
       break;
     case 'a':
-      a_enabled=false;
+      enabled[event.key]=false;
       break;
     case 's':
-      s_enabled=false;
+      enabled[event.key]=false;
       break;
     case 'd':
-      d_enabled=false;
+      enabled[event.key]=false;
       break;
   }
 }
@@ -180,7 +196,6 @@ function animate() {
    update();
  }
 
-
 function render(){
   switch(stato) {
     case 0:
@@ -190,7 +205,7 @@ function render(){
       renderer.render( scene, camera );
       break;
     default:
-      console.log("pippo");
+      console.log("error you should not be here");
   }
 }
 
@@ -218,9 +233,30 @@ function update(){
 
       break;
     case 1:
+
+      /*
+      const material = new THREE.LineBasicMaterial({
+        color: 0x0000ff
+      });
+
+      const points = [];
+      points.push( player.position);
+      let punto = new THREE.Vector3();
+      punto.copy(RayCasterArray[0].ray.direction);
+      punto.multiplyScalar(30);
+      punto.add(player.position);
+      points.push(punto);
+
+      const geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+      line = new THREE.Line( geometry, material );
+      scene.add( line );
+      */
+
       var dirZ = new THREE.Vector3( 0, 0, -2 );
       var dirX = new THREE.Vector3( -2, 0, 0 );
-      var cameraPosition = new THREE.Vector3( 0, 20, 50 );
+      var cameraPosition = new THREE.Vector3( 0, 0, 0 );
+      cameraPosition.copy(cameraTranslation);
       var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
       var quaternion = new THREE.Quaternion();
       quaternion.setFromEuler(camera_Incline);
@@ -228,9 +264,9 @@ function update(){
       //rotazione movimenti
       dirZ.applyQuaternion( player.quaternion );
       dirX.applyQuaternion( player.quaternion );
-      if (q_enabled){
+      if (enabled.q){
         //player rotation
-        player.rotation.y += Math.PI/30;
+        player.rotation.y += Math.PI/60;
         //camera rotation
         camera.quaternion.copy(player.quaternion);
         camera.quaternion.multiply(quaternion);
@@ -238,16 +274,28 @@ function update(){
         cameraPosition.applyQuaternion(player.quaternion);
         camera.position.copy(player.position);
         camera.position.add(cameraPosition);
+        //ray rotation
+        for (let x=0;x<9;x++){
+          let angle= Math.PI/60;
+          let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
+          let rotationQuaternion = new THREE.Quaternion();
+          rotationQuaternion.setFromEuler(rotationEuler);
+          RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
+        }
       }
-      if (w_enabled){
+      if (enabled.w){
         //player translation
         player.position.add( dirZ );
         //camera translation
         camera.position.add( dirZ );
+        //Raycasting translation
+        for (let x=0;x<9;x++){
+          RayCasterArray[x].ray.origin=player.position;
+        }
       }
-      if (e_enabled){
+      if (enabled.e){
         //player rotation
-        player.rotation.y -= Math.PI/30;
+        player.rotation.y -= Math.PI/60;
         //camera rotation
         camera.quaternion.copy(player.quaternion);
         camera.quaternion.multiply(quaternion);
@@ -255,24 +303,44 @@ function update(){
         cameraPosition.applyQuaternion(player.quaternion);
         camera.position.copy(player.position);
         camera.position.add(cameraPosition);
+        //ray rotation
+        for (let x=0;x<9;x++){
+          let angle= -Math.PI/60;
+          let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
+          let rotationQuaternion = new THREE.Quaternion();
+          rotationQuaternion.setFromEuler(rotationEuler);
+          RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
+        }
       }
-      if (a_enabled){
+      if (enabled.a){
         //player translation
         player.position.add( dirX );
         //camera translation
         camera.position.add( dirX );
+        //Raycasting translation
+        for (let x=0;x<9;x++){
+          RayCasterArray[x].ray.origin=player.position;
+        }
       }
-      if (s_enabled){
+      if (enabled.s){
         //player translation
         player.position.sub( dirZ );
         //camera translation
         camera.position.sub( dirZ );
+        //Raycasting translation
+        for (let x=0;x<9;x++){
+          RayCasterArray[x].ray.origin=player.position;
+        }
       }
-      if (d_enabled){
+      if (enabled.d){
         //player translation
         player.position.sub( dirX );
         //camera translation
         camera.position.sub( dirX );
+        //Raycasting translation
+        for (let x=0;x<9;x++){
+          RayCasterArray[x].ray.origin=player.position;
+        }
       }
       break;
     default:

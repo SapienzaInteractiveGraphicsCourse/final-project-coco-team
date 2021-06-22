@@ -14,7 +14,7 @@ export function getTexture (){
 }
 export function getRoom (width, height, depth, veinTex) {
     var mesh = new THREE.Mesh();
-    var room = new THREE.Group();
+    //var room = new THREE.Group();
     veinTex.wrapS = THREE.RepeatWrapping;
     veinTex.wrapT = THREE.RepeatWrapping;
     var tex_base=veinTex.clone();
@@ -58,9 +58,8 @@ export function getRoom (width, height, depth, veinTex) {
     wall3.position.set(0.0, wall_height/2 + base_height/2, -(wall_depth/2 - base_depth/2));
     wall4.position.set(0.0, wall_height/2 + base_height/2, (wall_depth/2 - base_depth/2));
 
-    room.add(base, wall1, wall2, wall3, wall4);
     //room.translateX(100)
-    return(room);
+    return [base, wall1, wall2, wall3, wall4];
 }
 
 export function getObstacle (width, height, depth, veinTex) {
@@ -95,7 +94,11 @@ export function getObstacle (width, height, depth, veinTex) {
 export function getMaze(veinTex){
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
-  room.add(temp);
+  room.add(temp[0]);
+  room.add(temp[1]);
+  room.add(temp[2]);
+  room.add(temp[3]);
+  room.add(temp[4]);
 
   temp = getObstacle(200.0, 700.0, 200.0, veinTex);
   temp.translateX(400.0);

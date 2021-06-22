@@ -7,7 +7,7 @@ export function init(font,roomTexture){
   const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000} );
   const material_2 = new THREE.MeshPhongMaterial( { color: 0xffffff} );
   var scene,camera;
-  let ButtonArray = [];
+  var ButtonArray = [];
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
@@ -92,7 +92,11 @@ export function init(font,roomTexture){
 
 /*---------------------------ROOM STUFF---------------------------*/
   var room1 = room.getRoom(100,100,100,roomTexture);
-  scene.add(room1);
+  scene.add(room1[0]);
+  scene.add(room1[1]);
+  scene.add(room1[2]);
+  scene.add(room1[3]);
+  scene.add(room1[4]);
 
   return [scene,camera,ButtonArray];
 }
