@@ -1,4 +1,6 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
+
+
 export function getTexture (){
   const myPromise = new Promise((resolve, reject) => {
     var textureLoader = new THREE.TextureLoader();
@@ -92,6 +94,7 @@ export function getObstacle (width, height, depth, veinTex) {
 }
 
 export function getMaze(veinTex){
+  var noPlayingField = [];
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
   room.add(temp[0]);
@@ -99,141 +102,187 @@ export function getMaze(veinTex){
   room.add(temp[2]);
   room.add(temp[3]);
   room.add(temp[4]);
-
+//1
   temp = getObstacle(200.0, 700.0, 200.0, veinTex);
   temp.translateX(400.0);
   temp.translateZ(400.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//2
   temp = getObstacle(100.0, 700.0, 100.0, veinTex);
   temp.translateX(200.0);
   temp.translateZ(200.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//3
   temp = getObstacle(250.0, 700.0, 250.0, veinTex);
   temp.translateX(-375.0);
   temp.translateZ(375.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//4
   temp = getObstacle(100.0, 700.0, 100.0, veinTex);
   temp.translateX(-250.0);
   temp.translateZ(200.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//5
   temp = getObstacle(100.0, 700.0, 200.0, veinTex);
   temp.translateX(-150.0);
   temp.translateZ(300.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//6
   temp = getObstacle(400.0, 700.0, 200.0, veinTex);
   temp.translateX(-300.0);
   temp.translateZ(-400.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//7
   temp = getObstacle(100.0, 700.0, 100.0, veinTex);
   temp.translateX(-50.0);
   temp.translateZ(-450.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//8
   temp = getObstacle(200.0, 700.0, 50.0, veinTex);
   temp.translateX(-5.0);
   temp.translateZ(-350.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//9
   temp = getObstacle(200.0, 700.0, 200.0, veinTex);
   temp.translateX(250.0);
   temp.translateZ(-350.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//10
   temp = getObstacle(100.0, 700.0, 100.0, veinTex);
   temp.translateX(250.0);
   temp.translateZ(-250.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//11
   temp = getObstacle(200.0, 700.0, 50.0, veinTex);
   temp.translateX(340.0);
   temp.translateZ(-370.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//12
   temp = getObstacle(200.0, 700.0, 200.0, veinTex);
   temp.translateX(-200.0);
   temp.translateZ(-50.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//13
   temp = getObstacle(200.0, 700.0, 200.0, veinTex);
   temp.translateX(270.0);
   temp.translateZ(80.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//14
   temp = getObstacle(50.0, 700.0, 200.0, veinTex);
   temp.translateX(230.0);
   temp.translateZ(-5.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//15
   temp = getObstacle(100.0, 700.0, 400.0, veinTex);
   temp.translateX(50.0);
   temp.translateZ(300.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//16
   temp = getObstacle(100.0, 700.0, 100.0, veinTex);
   temp.translateX(-50.0);
   temp.translateZ(-75.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//17
   temp = getObstacle(20.0, 700.0, 140.0, veinTex);
   temp.translateX(160.0); //200
   temp.translateZ(400.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//18
   temp = getObstacle(20.0, 700.0, 140.0, veinTex);
   temp.translateX(240.0); //280
   temp.translateZ(400.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//19
   temp = getObstacle(80.0, 700.0, 20.0, veinTex);
   temp.translateX(200.0);
   temp.translateZ(340.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//20
   temp = getObstacle(100.0, 700.0, 20.0, veinTex);
   temp.translateX(450.0);
   temp.translateZ(-150.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//21
   temp = getObstacle(20.0, 700.0, 350.0, veinTex);
   temp.translateX(400.0);
   temp.translateZ(-65.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//22
   temp = getObstacle(20.0, 700.0, 200.0, veinTex);
   temp.translateX(-450.0);
   temp.translateZ(-240.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//23
   temp = getObstacle(150.0, 700.0, 20.0, veinTex);
   temp.translateX(-380.0);
   temp.translateZ(-270.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//24
   temp = getObstacle(20.0, 700.0, 100.0, veinTex);
   temp.translateX(-330.0);
   temp.translateZ(-220.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//25
   temp = getObstacle(100.0, 700.0, 20.0, veinTex);
   temp.translateX(-450.0);
   temp.translateZ(-50.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//26
   temp = getObstacle(20.0, 700.0, 150.0, veinTex);
   temp.translateX(-410.0);
   temp.translateZ(-90.0);
   room.add(temp);
-
+  noPlayingField = NOplayingField(temp,noPlayingField);
+//27
   temp = getObstacle(400.0, 700.0, 20.0, veinTex);
   temp.translateX(-300.0);
   temp.translateZ(100.0);
   room.add(temp);
+  noPlayingField = NOplayingField(temp,noPlayingField);
 
-  return(room);
+  return[room,noPlayingField];
+}
+
+function NOplayingField(temp,noPlayingField){
+    var x = temp.position.x;
+    var z = temp.position.z;
+    var width = temp.geometry.parameters.width;
+    var depth = temp.geometry.parameters.depth;
+    var x_max = x+(width/2); //+ 15;
+    var x_min = x-(width/2); //- 15;
+    var z_max = z+(depth/2); //+ 15;
+    var z_min = z-(depth/2); //- 15;
+    var noObjects = {
+      "x_max":x_max,
+      "x_min":x_min,
+      "z_max":z_max,
+      "z_min":z_min,
+    };
+    noPlayingField.push(noObjects);
+    return noPlayingField;
 }

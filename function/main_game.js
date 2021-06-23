@@ -8,7 +8,7 @@ export function init(roomTexture){
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
 
-  
+
 
 
   const light = new THREE.PointLight( 0xffffff, 4, 1500 );
@@ -18,7 +18,9 @@ export function init(roomTexture){
   scene.add(light);
   scene.add(light1);
 
-  var room_mesh = room.getMaze(roomTexture);
+  var maze = room.getMaze(roomTexture);
+  var room_mesh = maze[0];
+  var noPlayingField = maze[1];
   scene.add(room_mesh);
 
   const geometry = new THREE.BoxGeometry(20, 80, 20);
@@ -35,5 +37,5 @@ export function init(roomTexture){
   camera.position.set(0,(cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2+cameraTranslation.y,cameraTranslation.z);
   camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
 
-  return [scene,camera,cubeMesh,cameraTranslation,room_mesh];
+  return [scene,camera,cubeMesh,cameraTranslation,room_mesh,noPlayingField];
 }
