@@ -4,6 +4,7 @@ import * as MODEL from "./function/model.js";
 import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";
 import * as room from "./function/room.js";
+import * as debug from "./function/debug.js";
 
 //resource that has to be loaded
 var virusMesh,roomTexture,syringeMesh,font;
@@ -19,10 +20,15 @@ var ButtonArrayId;
 var player;
 var cameraTranslation;
 var enabled;
+var collision;
 
 var RayCasterArray;
 
-var line;
+var CameraRayCast;
+
+var obstacles;
+
+var linesArray;
 
 loader();
 
@@ -54,6 +60,7 @@ function init() {
     "a":false,
     "s":false,
     "d":false,
+    "l":false
   };
 
   pointer = new THREE.Vector2();
@@ -75,15 +82,16 @@ function init() {
   camera = temp [1];
   player = temp[2];
   cameraTranslation = temp[3];
-  console.log(cameraTranslation);
+  obstacles = temp[4];
 
 /*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
 
 /*---------------------------PLAYER RAYCASTER---------------------------*/
   RayCasterArray = [];
-  for (let x=0;x<9;x++){
-    let angle= -x*(Math.PI/4);
+  let rayNumbers = 8
+  for (let x=0;x<rayNumbers;x++){
+    let angle= -x*(Math.PI*2/rayNumbers);
     let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
     let rotationQuaternion = new THREE.Quaternion();
     rotationQuaternion.setFromEuler(rotationEuler);
@@ -91,6 +99,21 @@ function init() {
     RayDirection.applyQuaternion(rotationQuaternion);
     let RayCasterElement = new THREE.Raycaster(player.position,RayDirection);
     RayCasterArray.push(RayCasterElement);
+  }
+
+  collision=[];
+  var collision_type={
+    "isColliding": false,
+    "distance":20,
+    "normal": new THREE.Vector3(0,0,0)
+  };
+  for (let x=0;x<RayCasterArray.length;x++){
+    collision.push(JSON.parse(JSON.stringify(collision_type)));
+  }
+
+  linesArray=[];
+  for (let x=0;x<rayNumbers;x++){
+    linesArray.push(debug.drawRay(x,scene,player,RayCasterArray));
   }
 
 /*---------------------------EVENT LISTENER---------------------------*/
@@ -125,8 +148,7 @@ function keypressedAgent(event) {
       enabled[event.key]=true;
       break;
     case 'l':
-      console.log(player.position)
-      console.log(RayCasterArray[0]);
+      enabled[event.key]=true;
       break;
   }
 }
@@ -149,6 +171,9 @@ function keyreleasedAgent(event) {
       enabled[event.key]=false;
       break;
     case 'd':
+      enabled[event.key]=false;
+      break;
+    case 'l':
       enabled[event.key]=false;
       break;
   }
@@ -233,117 +258,132 @@ function update(){
 
       break;
     case 1:
-
-      /*
-      const material = new THREE.LineBasicMaterial({
-        color: 0x0000ff
-      });
-
-      const points = [];
-      points.push( player.position);
-      let punto = new THREE.Vector3();
-      punto.copy(RayCasterArray[0].ray.direction);
-      punto.multiplyScalar(30);
-      punto.add(player.position);
-      points.push(punto);
-
-      const geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-      line = new THREE.Line( geometry, material );
-      scene.add( line );
-      */
-
-      var dirZ = new THREE.Vector3( 0, 0, -2 );
-      var dirX = new THREE.Vector3( -2, 0, 0 );
-      var cameraPosition = new THREE.Vector3( 0, 0, 0 );
-      cameraPosition.copy(cameraTranslation);
+      var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
+      var cameraPosition = checkCameraCollision(oldCameraPosition);
       var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
-      var quaternion = new THREE.Quaternion();
-      quaternion.setFromEuler(camera_Incline);
+      var cameraVerticalRotation = new THREE.Quaternion().setFromEuler(camera_Incline);
 
-      //rotazione movimenti
-      dirZ.applyQuaternion( player.quaternion );
-      dirX.applyQuaternion( player.quaternion );
+      var isRotating,isMoving;
+
+/*---------------------------PLAYER ROTATION---------------------------*/
+      var rotation = 0;
       if (enabled.q){
-        //player rotation
-        player.rotation.y += Math.PI/60;
-        //camera rotation
-        camera.quaternion.copy(player.quaternion);
-        camera.quaternion.multiply(quaternion);
-        //camera translation
-        cameraPosition.applyQuaternion(player.quaternion);
-        camera.position.copy(player.position);
-        camera.position.add(cameraPosition);
-        //ray rotation
-        for (let x=0;x<9;x++){
-          let angle= Math.PI/60;
-          let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
-          let rotationQuaternion = new THREE.Quaternion();
-          rotationQuaternion.setFromEuler(rotationEuler);
-          RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
-        }
-      }
-      if (enabled.w){
-        //player translation
-        player.position.add( dirZ );
-        //camera translation
-        camera.position.add( dirZ );
-        //Raycasting translation
-        for (let x=0;x<9;x++){
-          RayCasterArray[x].ray.origin=player.position;
-        }
+        rotation += Math.PI/60;
       }
       if (enabled.e){
+        rotation -= Math.PI/60;
+      }
+
+      isRotating=rotation!=0;
+      if (isRotating){
         //player rotation
-        player.rotation.y -= Math.PI/60;
-        //camera rotation
-        camera.quaternion.copy(player.quaternion);
-        camera.quaternion.multiply(quaternion);
-        //camera translation
-        cameraPosition.applyQuaternion(player.quaternion);
-        camera.position.copy(player.position);
-        camera.position.add(cameraPosition);
-        //ray rotation
-        for (let x=0;x<9;x++){
-          let angle= -Math.PI/60;
-          let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
+        player.rotation.y += rotation;
+
+        for (let x=0;x<RayCasterArray.length;x++){
+          let rotationEuler = new THREE.Euler( 0, rotation, 0, 'XYZ' );
           let rotationQuaternion = new THREE.Quaternion();
           rotationQuaternion.setFromEuler(rotationEuler);
           RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
         }
+
+      }
+/*---------------------------PLAYER MOVEMENT---------------------------*/
+      var dirZ = new THREE.Vector3(0,0,2);
+      var dirX = new THREE.Vector3(2,0,0);
+
+      dirZ.applyQuaternion(player.quaternion);
+      dirX.applyQuaternion(player.quaternion);
+
+      var direction = new THREE.Vector3(0,0,0);
+      var movingDirection;
+
+      if (enabled.w){
+        direction.sub(dirZ);
       }
       if (enabled.a){
-        //player translation
-        player.position.add( dirX );
-        //camera translation
-        camera.position.add( dirX );
-        //Raycasting translation
-        for (let x=0;x<9;x++){
-          RayCasterArray[x].ray.origin=player.position;
-        }
+        direction.sub(dirX);
       }
       if (enabled.s){
-        //player translation
-        player.position.sub( dirZ );
-        //camera translation
-        camera.position.sub( dirZ );
-        //Raycasting translation
-        for (let x=0;x<9;x++){
+        direction.add(dirZ);
+      }
+      if (enabled.d){
+        direction.add(dirX);
+      }
+
+      isMoving=!direction.equals(new THREE.Vector3(0,0,0));
+
+      if (isMoving){
+        movingDirection=checkCollision(direction);
+        player.position.add(movingDirection);
+        //translating ray with player
+        for (let x=0;x<RayCasterArray.length;x++){
           RayCasterArray[x].ray.origin=player.position;
         }
       }
-      if (enabled.d){
-        //player translation
-        player.position.sub( dirX );
-        //camera translation
-        camera.position.sub( dirX );
-        //Raycasting translation
-        for (let x=0;x<9;x++){
-          RayCasterArray[x].ray.origin=player.position;
-        }
+/*---------------------------CAMERA TRANSLATION---------------------------*/
+      //cameraTranslation
+      if (isRotating||isMoving){
+        //camera rotation
+        camera.quaternion.copy(player.quaternion);
+        camera.quaternion.multiply(cameraVerticalRotation);
+        //computing new camera location
+        cameraPosition.applyQuaternion(player.quaternion);
+        camera.position.copy(player.position);
+        camera.position.add(cameraPosition);
+      }
+/*---------------------------UPDATING RAY VISUALIZATION---------------------------*/
+      for (let x=0; x<linesArray.length;x++){
+        debug.updateRay(linesArray[x],player);
       }
       break;
     default:
       console.log("pippo");
+  }
+}
+
+function checkCollision(direction){
+  let Collision_Distance = 15;
+  for (let x=0;x<collision.length;x++){
+    collision[x].isColliding=false;
+    collision[x].distance=Collision_Distance+10;
+  }
+  for (var rayIndex = 0; rayIndex < RayCasterArray.length; rayIndex++) {
+    var collisionResults = RayCasterArray[rayIndex].intersectObjects(obstacles.children);
+    if(collisionResults.length > 0) {
+      if(collisionResults[0].distance < Collision_Distance) {
+          var axesCollision = collisionResults[0].face.normal.clone();
+          collision[rayIndex].isColliding=true;
+          collision[rayIndex].normal=axesCollision;
+      }
+    collision[rayIndex].distance=collisionResults[0].distance;
+    }
+  }
+  var results=direction.clone();
+  var final_normal=new THREE.Vector3();
+  var normalArray = [];
+  for (let x=0;x<collision.length;x++){
+    if (collision[x].isColliding){
+      if(!normalArray.includes(collision[x].normal))
+        normalArray.push(collision[x].normal);
+    }
+  }
+  for (let x=0;x<normalArray.length;x++){
+    if(direction.clone().dot(normalArray[x])<0)
+      results=results.sub(normalArray[x].multiplyScalar(direction.clone().dot(normalArray[x])));
+  }
+  return results;
+}
+function checkCameraCollision(cameraPosition){
+  let Collision_Distance = cameraPosition.z;
+  var collisionResults = RayCasterArray[2].intersectObjects(obstacles.children);
+  if(collisionResults.length > 0) {
+    if(collisionResults[0].distance < Collision_Distance) {
+      let newCameraPosition = new THREE.Vector3().copy(cameraPosition);
+      newCameraPosition.z=collisionResults[0].distance-1;
+      return newCameraPosition;
+    }
+    else{
+      return cameraPosition;
+    }
   }
 }

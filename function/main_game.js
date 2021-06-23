@@ -26,7 +26,7 @@ export function init(roomTexture){
   var cubeMesh = new THREE.Mesh( geometry, material_0);
   cubeMesh.position.y=geometry.parameters.height/2;
   cubeMesh.geometry.computeBoundingBox();
-  //scene.add(cubeMesh);
+  scene.add(cubeMesh);
 
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -35,5 +35,5 @@ export function init(roomTexture){
   camera.position.set(0,(cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2+cameraTranslation.y,cameraTranslation.z);
   camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
 
-  return [scene,camera,cubeMesh,cameraTranslation];
+  return [scene,camera,cubeMesh,cameraTranslation,room_mesh];
 }
