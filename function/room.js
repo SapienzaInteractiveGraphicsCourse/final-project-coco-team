@@ -273,10 +273,10 @@ function NOplayingField(temp,noPlayingField){
     var z = temp.position.z;
     var width = temp.geometry.parameters.width;
     var depth = temp.geometry.parameters.depth;
-    var x_max = x+(width/2) + 30;
-    var x_min = x-(width/2) - 30;
-    var z_max = z+(depth/2) + 30;
-    var z_min = z-(depth/2) - 30;
+    var x_max = x+(width/2);// + 15;
+    var x_min = x-(width/2);// - 15;
+    var z_max = z+(depth/2);// + 15;
+    var z_min = z-(depth/2);// - 15;
     var noObjects = {
       "x_max":x_max,
       "x_min":x_min,

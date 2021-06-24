@@ -431,13 +431,20 @@ function spreadSyringes(nSyringes){
       }
       else{
         values_ok = false;
+        break;
       }
     }
+
+
     if(values_ok){  //vuol dire che è fuori a tutti gli ostacoli
       syringes[i].position.set(x,0,z); //accetto questi valori e inserisco una siringa li
+      console.log("ho analizzato: ",j);
+      console.log("ho aggiunto: ",i);
       i++; //passo alla siringa successiva
+
     }
     else{
+      console.log("mi sono fermata a: ",j);
       //vuol dire che ho trovato un ostacolo in cui cadrebbe la siringa e quindi non posso accettare quei valori
       //devo rigenerare altri due valori per inserire la siringa
     }
