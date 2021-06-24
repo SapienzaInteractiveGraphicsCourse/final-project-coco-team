@@ -22,8 +22,8 @@ export function init(roomTexture){
   var full_room = maze[0];
   var only_room = maze[1];
   var noPlayingField = maze[2];
+  full_room.name = "full_room";
   scene.add(full_room);
-  //scene.add(room);
 
   const geometry = new THREE.BoxGeometry(20, 80, 20);
   const material_0 = new THREE.MeshPhongMaterial( { color: 0x00f0f0 });

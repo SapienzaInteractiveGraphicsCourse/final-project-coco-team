@@ -96,14 +96,13 @@ export function getObstacle (width, height, depth, veinTex) {
 export function getMaze(veinTex){
   var noPlayingField = [];
   var full_room = new THREE.Group();
-  full_room.name="full_room";
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
-  room.add(temp[0]);
-  room.add(temp[1]);
-  room.add(temp[2]);
-  room.add(temp[3]);
-  room.add(temp[4]);
+  room.add(temp[0].clone());
+  room.add(temp[1].clone());
+  room.add(temp[2].clone());
+  room.add(temp[3].clone());
+  room.add(temp[4].clone());
 
   full_room.add(temp[0]);
   full_room.add(temp[1]);
@@ -272,7 +271,6 @@ export function getMaze(veinTex){
   temp.translateZ(100.0);
   full_room.add(temp);
   noPlayingField = NOplayingField(temp,noPlayingField);
-
   return[full_room, room, noPlayingField];
 }
 

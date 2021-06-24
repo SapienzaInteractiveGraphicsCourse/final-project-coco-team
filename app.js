@@ -28,6 +28,7 @@ var CameraRayCast;
 
 var full_room;
 var only_room;
+var using_only_room = false;
 
 var linesArray;
 
@@ -353,10 +354,10 @@ function update(){
       console.log("pippo");
   }
   interactionPlayerSyringe();
-   if(countSyringesAlive == 19){
+  if(countSyringesAlive == 19){
      scene.add(only_room);
      scene.remove(scene.children.find((child) => child.name === "full_room"));
-     full_room = only_room;
+     using_only_room = true;
    }
 }
 
@@ -367,7 +368,12 @@ function checkCollision(direction){
     collision[x].distance=Collision_Distance+10;
   }
   for (var rayIndex = 0; rayIndex < RayCasterArray.length; rayIndex++) {
-    var collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
+    if (using_only_room){
+      var collisionResults = RayCasterArray[rayIndex].intersectObjects(only_room.children);
+    }
+    else{
+      var collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
+    }
     if(collisionResults.length > 0) {
       if(collisionResults[0].distance < Collision_Distance) {
           var axesCollision = collisionResults[0].face.normal.clone();
@@ -394,7 +400,12 @@ function checkCollision(direction){
 }
 function checkCameraCollision(cameraPosition){
   let Collision_Distance = cameraPosition.z;
-  var collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
+  if(using_only_room){
+    var collisionResultsObstacles = RayCasterArray[2].intersectObjects(only_room.children);
+  }
+  else{
+    var collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
+  }
   if(collisionResultsObstacles.length > 0) {
     if(collisionResultsObstacles[0].distance < Collision_Distance) {
       let newCameraPositionObstacles = new THREE.Vector3().copy(cameraPosition);
