@@ -96,6 +96,7 @@ export function getObstacle (width, height, depth, veinTex) {
 export function getMaze(veinTex){
   var noPlayingField = [];
   var full_room = new THREE.Group();
+  full_room.name="full_room";
   var room = new THREE.Group();
   var temp = getRoom(1000.0, 700.0, 1000.0, veinTex);
   room.add(temp[0]);

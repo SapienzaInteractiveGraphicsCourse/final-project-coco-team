@@ -35,8 +35,8 @@ export function init(roomTexture){
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-  //var cameraTranslation = new THREE.Vector3( 0, (cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2, 60 );
-  var cameraTranslation = new THREE.Vector3( 0, 1000, 0);
+  var cameraTranslation = new THREE.Vector3( 0, (cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2, 60 );
+  //var cameraTranslation = new THREE.Vector3( 0, 1000, 0);
   camera.position.set(0,(cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2+cameraTranslation.y,cameraTranslation.z);
   camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
 

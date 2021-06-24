@@ -353,14 +353,11 @@ function update(){
       console.log("pippo");
   }
   interactionPlayerSyringe();
-  // if(countSyringesAlive == 19){
-  //   while (scene.children.length)
-  //   {
-  //       scene.remove(scene.children[0]);
-  //   }
-  //   scene.add(room);
-  //   full_room = only_room;
-  // }
+   if(countSyringesAlive == 19){
+     scene.add(only_room);
+     scene.remove(scene.children.find((child) => child.name === "full_room"));
+     full_room = only_room;
+   }
 }
 
 function checkCollision(direction){

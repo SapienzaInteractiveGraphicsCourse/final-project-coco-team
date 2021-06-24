@@ -92,3 +92,24 @@ export function getFont (){
   });
   return myPromise;
 }
+
+export function getVirusMesh2 () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/Virus.gltf',
+    function ( gltf ) {
+      const virusMesh = gltf.scene.children.find((child) => child.name === "Body");
+      virusMesh.scale.set(virusMesh.scale.x * 0.4, virusMesh.scale.y * 0.4, virusMesh.scale.z * 0.4);
+      virusMesh.position.y = 60;
+      virusMesh.rotation.y = Math.PI/2;
+      resolve(virusMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
