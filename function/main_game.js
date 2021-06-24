@@ -19,9 +19,11 @@ export function init(roomTexture){
   scene.add(light1);
 
   var maze = room.getMaze(roomTexture);
-  var room_mesh = maze[0];
-  var noPlayingField = maze[1];
-  scene.add(room_mesh);
+  var full_room = maze[0];
+  var only_room = maze[1];
+  var noPlayingField = maze[2];
+  scene.add(full_room);
+  //scene.add(room);
 
   const geometry = new THREE.BoxGeometry(20, 80, 20);
   const material_0 = new THREE.MeshPhongMaterial( { color: 0x00f0f0 });
@@ -33,9 +35,10 @@ export function init(roomTexture){
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-  var cameraTranslation = new THREE.Vector3( 0, (cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2, 60 );
+  //var cameraTranslation = new THREE.Vector3( 0, (cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2, 60 );
+  var cameraTranslation = new THREE.Vector3( 0, 1000, 0);
   camera.position.set(0,(cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2+cameraTranslation.y,cameraTranslation.z);
   camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
 
-  return [scene,camera,cubeMesh,cameraTranslation,room_mesh,noPlayingField];
+  return [scene, camera, cubeMesh, cameraTranslation, full_room, only_room, noPlayingField];
 }

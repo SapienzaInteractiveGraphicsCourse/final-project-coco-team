@@ -26,7 +26,8 @@ var RayCasterArray;
 
 var CameraRayCast;
 
-var obstacles;
+var full_room;
+var only_room;
 
 var linesArray;
 
@@ -86,8 +87,11 @@ function init() {
   camera = temp [1];
   player = temp[2];
   cameraTranslation = temp[3];
-  obstacles = temp[4];
-  noPlayingField = temp[5];
+  full_room = temp[4]
+  only_room = temp[5];
+  noPlayingField = temp[6];
+
+
 
   //syringeMesh.userData.tag = 'syringe';
   var nSyringes = 20;
@@ -349,6 +353,14 @@ function update(){
       console.log("pippo");
   }
   interactionPlayerSyringe();
+  // if(countSyringesAlive == 19){
+  //   while (scene.children.length)
+  //   {
+  //       scene.remove(scene.children[0]);
+  //   }
+  //   scene.add(room);
+  //   full_room = only_room;
+  // }
 }
 
 function checkCollision(direction){
@@ -358,7 +370,7 @@ function checkCollision(direction){
     collision[x].distance=Collision_Distance+10;
   }
   for (var rayIndex = 0; rayIndex < RayCasterArray.length; rayIndex++) {
-    var collisionResults = RayCasterArray[rayIndex].intersectObjects(obstacles.children);
+    var collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
     if(collisionResults.length > 0) {
       if(collisionResults[0].distance < Collision_Distance) {
           var axesCollision = collisionResults[0].face.normal.clone();
@@ -385,12 +397,12 @@ function checkCollision(direction){
 }
 function checkCameraCollision(cameraPosition){
   let Collision_Distance = cameraPosition.z;
-  var collisionResults = RayCasterArray[2].intersectObjects(obstacles.children);
-  if(collisionResults.length > 0) {
-    if(collisionResults[0].distance < Collision_Distance) {
-      let newCameraPosition = new THREE.Vector3().copy(cameraPosition);
-      newCameraPosition.z=collisionResults[0].distance-1;
-      return newCameraPosition;
+  var collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
+  if(collisionResultsObstacles.length > 0) {
+    if(collisionResultsObstacles[0].distance < Collision_Distance) {
+      let newCameraPositionObstacles = new THREE.Vector3().copy(cameraPosition);
+      newCameraPositionObstacles.z=collisionResultsObstacles[0].distance-1;
+      return newCameraPositionObstacles;
     }
     else{
       return cameraPosition;
@@ -438,13 +450,13 @@ function spreadSyringes(nSyringes){
 
     if(values_ok){  //vuol dire che è fuori a tutti gli ostacoli
       syringes[i].position.set(x,0,z); //accetto questi valori e inserisco una siringa li
-      console.log("ho analizzato: ",j);
-      console.log("ho aggiunto: ",i);
+      // console.log("ho analizzato: ",j);
+      //console.log("ho aggiunto: ",i);
       i++; //passo alla siringa successiva
 
     }
     else{
-      console.log("mi sono fermata a: ",j);
+      // console.log("mi sono fermata a: ",j);
       //vuol dire che ho trovato un ostacolo in cui cadrebbe la siringa e quindi non posso accettare quei valori
       //devo rigenerare altri due valori per inserire la siringa
     }
