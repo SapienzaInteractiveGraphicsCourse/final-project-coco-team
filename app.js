@@ -5,9 +5,10 @@ import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";
 import * as room from "./function/room.js";
 import * as debug from "./function/debug.js";
+import * as timer from "./function/timer.js";
 
 //resource that has to be loaded
-var virusMesh,roomTexture,syringeMesh,font;
+var virusMesh,roomTexture,syringeMesh,font,playerMesh;
 
 var camera, scene, renderer, controls;
 var scene_menu,camera_menu;
@@ -41,15 +42,17 @@ loader();
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
 function loader(){
   var virusMeshPromise = MODEL.getVirusMesh();
+  var playerMeshPromise = MODEL.getPlayerMesh();
   var roomTexturePromise = MODEL.getTexture();
   var syringePromise = MODEL.getSyringeMesh();
   var fontPromise = MODEL.getFont();
-  Promise.all([virusMeshPromise, roomTexturePromise,syringePromise,fontPromise]).then(
+  Promise.all([virusMeshPromise, roomTexturePromise,syringePromise,fontPromise,playerMeshPromise]).then(
     data => {
     virusMesh = data[0];
     roomTexture = data[1];
     syringeMesh=data[2];
     font=data[3];
+    playerMesh=data[4];
     init();
   },error => {
     console.log( 'An error happened:',error );
@@ -58,7 +61,7 @@ function loader(){
 
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
-  stato=1;
+  stato=0;
   enabled={
     "q":false,
     "w":false,
@@ -83,7 +86,7 @@ function init() {
   ButtonArrayId = temp [2];
 
 /*---------------------------MAIN SCENE STUFF---------------------------*/
-  temp = main_game.init(roomTexture);
+  temp = main_game.init(roomTexture,playerMesh);
   scene = temp[0];
   camera = temp [1];
   player = temp[2];
@@ -118,7 +121,7 @@ function init() {
   collision=[];
   var collision_type={
     "isColliding": false,
-    "distance":20,
+    "distance":40,
     "normal": new THREE.Vector3(0,0,0)
   };
   for (let x=0;x<RayCasterArray.length;x++){
@@ -215,8 +218,10 @@ function onMouseClick( event ) {
   switch(stato) {
     case 0:
       if(INTERSECTED!=null){
-        if (INTERSECTED.uuid == ButtonArrayId[0])
+        if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
+          timer.setTimer(0,20);
+        }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
       }
@@ -351,28 +356,29 @@ function update(){
       }
       break;
     default:
-      console.log("pippo");
+      console.log("ERROR");
   }
   interactionPlayerSyringe();
-  if(countSyringesAlive == 19){
-     scene.add(only_room);
-     scene.remove(scene.children.find((child) => child.name === "full_room"));
-     using_only_room = true;
-   }
+  if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){
+      scene.add(only_room);
+      scene.remove(scene.children.find((child) => child.name === "full_room"));
+      using_only_room = true;
+    }
 }
 
 function checkCollision(direction){
-  let Collision_Distance = 15;
+  let Collision_Distance = 17;
   for (let x=0;x<collision.length;x++){
     collision[x].isColliding=false;
     collision[x].distance=Collision_Distance+10;
   }
+  var collisionResults;
   for (var rayIndex = 0; rayIndex < RayCasterArray.length; rayIndex++) {
     if (using_only_room){
-      var collisionResults = RayCasterArray[rayIndex].intersectObjects(only_room.children);
+      collisionResults = RayCasterArray[rayIndex].intersectObjects(only_room.children);
     }
     else{
-      var collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
+      collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
     }
     if(collisionResults.length > 0) {
       if(collisionResults[0].distance < Collision_Distance) {
@@ -400,11 +406,12 @@ function checkCollision(direction){
 }
 function checkCameraCollision(cameraPosition){
   let Collision_Distance = cameraPosition.z;
+  var collisionResultsObstacles;
   if(using_only_room){
-    var collisionResultsObstacles = RayCasterArray[2].intersectObjects(only_room.children);
+    collisionResultsObstacles = RayCasterArray[2].intersectObjects(only_room.children);
   }
   else{
-    var collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
+    collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
   }
   if(collisionResultsObstacles.length > 0) {
     if(collisionResultsObstacles[0].distance < Collision_Distance) {

@@ -33,36 +33,6 @@ export function getSyringeMesh () {
   return myPromise;
 }
 
-export function getVirusMesh () {
-  const myPromise = new Promise((resolve, reject) => {
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/models/virus.glb',
-    function ( gltf ) {
-      const virusMesh = gltf.scene.children.find((child) => child.name === "virus");
-      virusMesh.scale.set(virusMesh.scale.x * 0.4, virusMesh.scale.y * 0.4, virusMesh.scale.z * 0.4);
-      var textureLoader = new THREE.TextureLoader();
-      textureLoader.load( "./resources/models/Texture.png", function ( map ) {
-          virusMesh.material.map = map;
-          virusMesh.material.map.encoding = THREE.sRGBEncoding;
-          virusMesh.material.map.flipY = false;
-          virusMesh.material.needsUpdate = true;
-      });
-      virusMesh.position.y = virusMesh.scale.y;
-      virusMesh.rotation.y = Math.PI/2;
-
-      virusMesh.geometry.computeBoundingBox();
-      resolve(virusMesh);
-    },
-    function ( xhr ) {
-    },
-    function ( error ) {
-      console.log( 'An error happened' );
-      reject(error);
-    });
-  });
-  return myPromise;
-}
-
 export function getTexture (){
   const myPromise = new Promise((resolve, reject) => {
     var textureLoader = new THREE.TextureLoader();
@@ -93,7 +63,7 @@ export function getFont (){
   return myPromise;
 }
 
-export function getVirusMesh2 () {
+export function getVirusMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./resources/improved_models/Virus.gltf',
@@ -103,6 +73,27 @@ export function getVirusMesh2 () {
       virusMesh.position.y = 60;
       virusMesh.rotation.y = Math.PI/2;
       resolve(virusMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getPlayerMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/player.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const playerMesh = gltf.scene.children.find((child) => child.name === "Body");
+      playerMesh.scale.set(playerMesh.scale.x * scale, playerMesh.scale.y * scale, playerMesh.scale.z * scale);
+      playerMesh.position.y += 15*scale;
+      resolve(playerMesh);
     },
     function ( xhr ) {
     },

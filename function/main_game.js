@@ -1,7 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
-export function init(roomTexture){
+export function init(roomTexture,playerMesh){
 
 
   var scene,camera;
@@ -14,7 +14,7 @@ export function init(roomTexture){
   const light = new THREE.PointLight( 0xffffff, 4, 1500 );
   light.position.set(0, 1000, 0);
   const light1 = new THREE.PointLight( 0xffffff, 4, 200 );
-  light1.position.set(0, -50, 0);
+  light1.position.set(0, -50, 20);
   scene.add(light);
   scene.add(light1);
 
@@ -25,20 +25,14 @@ export function init(roomTexture){
   full_room.name = "full_room";
   scene.add(full_room);
 
-  const geometry = new THREE.BoxGeometry(20, 80, 20);
-  const material_0 = new THREE.MeshPhongMaterial( { color: 0x00f0f0 });
-  var cubeMesh = new THREE.Mesh( geometry, material_0);
-  cubeMesh.position.y=geometry.parameters.height/2;
-  cubeMesh.geometry.computeBoundingBox();
-  scene.add(cubeMesh);
+  scene.add(playerMesh);
 
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-  var cameraTranslation = new THREE.Vector3( 0, (cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2, 60 );
-  //var cameraTranslation = new THREE.Vector3( 0, 1000, 0);
-  camera.position.set(0,(cubeMesh.geometry.boundingBox.max.y-cubeMesh.geometry.boundingBox.min.y)/2+cameraTranslation.y,cameraTranslation.z);
+  var cameraTranslation = new THREE.Vector3( 0, 40, 60 );
+  camera.position.set(0,cameraTranslation.y+playerMesh.position.y,cameraTranslation.z);
   camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
 
-  return [scene, camera, cubeMesh, cameraTranslation, full_room, only_room, noPlayingField];
+  return [scene, camera, playerMesh, cameraTranslation, full_room, only_room, noPlayingField];
 }

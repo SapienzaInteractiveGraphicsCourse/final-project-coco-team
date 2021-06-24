@@ -92,6 +92,9 @@ export function init(font,roomTexture){
 
 /*---------------------------ROOM STUFF---------------------------*/
   var room1 = room.getRoom(100,100,100,roomTexture);
+  for(let x = 0; x< room1.length; x++){
+    room1[x].position.y-=30;
+  }
   scene.add(room1[0]);
   scene.add(room1[1]);
   scene.add(room1[2]);
