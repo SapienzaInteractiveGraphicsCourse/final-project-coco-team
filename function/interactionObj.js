@@ -60,6 +60,11 @@ function expandNOplayingField(obj,noPlayingField){
     return noPlayingField;
 }
 
+export function removePlayerPosition(player, noPlayingField){
+  noPlayingField = expandNOplayingField(player,noPlayingField);
+  return noPlayingField;
+}
+
 export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObjects){
   var maxDistance = 20;
   for(var i = 0; i<objectsArray.length; i++){
@@ -79,6 +84,12 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
     }
   }
   return aliveObjects;
+}
+
+export function disappearObject(objectsArray){
+  for(var i = 0; i<objectsArray.length; i++){
+    objectsArray[i].visible = false;
+  }
 }
 
 export function spinObjects(Array){

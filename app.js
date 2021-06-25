@@ -116,6 +116,8 @@ function init() {
   maskMesh.userData.tag = 'mask';
   gelMesh.userData.tag = 'gel';
 
+  noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
+
   countMasksAlive = 20;
   var temp = interaction.spreadingObj(countMasksAlive, maskMesh, noPlayingField, scene);
   masks = temp[0];
@@ -126,7 +128,7 @@ function init() {
   gels = temp[0];
   noPlayingField = temp[1];
 
-  countSyringesFullAlive = 20;
+  /*countSyringesFullAlive = 20;
   temp = interaction.spreadingObj(countSyringesFullAlive, syringeFullMesh, noPlayingField, scene);
   syringesFull = temp[0];
   noPlayingField = temp[1];
@@ -139,7 +141,7 @@ function init() {
   countVirusAlive = 20;
   temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
   virus = temp[0];
-  noPlayingField = temp[1];
+  noPlayingField = temp[1];*/
 
   countVaccinesAlive = 20;
   temp  = interaction.spreadingObj(countVaccinesAlive, vaccineMesh, noPlayingField, scene);
@@ -218,7 +220,7 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          end_time=timer.setTimer(2,0);
+          end_time=timer.setTimer(0,30);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -359,27 +361,40 @@ function update(){
       }
 
 /*---------------------------INTERACTION OBJECTS---------------------------*/
-      interaction.spinObjects(syringesFull);
+      /*interaction.spinObjects(syringesFull);
       countSyringesFullAlive = interaction.interactionPlayerObject(syringesFull, player.position.x, player.position.z, countSyringesFullAlive);
 
       interaction.spinObjects(syringesEmpty);
-      countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);
+      countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);*/
 
-      interaction.spinObjects(vaccines);
-      countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
+      if(!using_only_room){
+        interaction.spinObjects(vaccines);
+        countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
 
-      interaction.spinObjects(masks);
-      countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
+        interaction.spinObjects(masks);
+        countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
 
-      interaction.spinObjects(gels);
-      countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
+        interaction.spinObjects(gels);
+        countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
+      }
+      if(using_only_room){
+        interaction.spinObjects(virus);
+        countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
+      }
 
-      interaction.spinObjects(virus);
-      countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
-
-      if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){
+      if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!" && !using_only_room){
           scene.add(only_room);
           scene.remove(scene.children.find((child) => child.name === "full_room"));
+          interaction.disappearObject(vaccines);
+          interaction.disappearObject(masks);
+          interaction.disappearObject(gels);
+
+          noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
+          countVirusAlive = 20;
+          var temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
+          virus = temp[0];
+          noPlayingField = temp[1];
+
           using_only_room = true;
         }
 
