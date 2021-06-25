@@ -9,7 +9,7 @@ import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
 
 //resource that has to be loaded
-var virusMesh,roomTexture,syringeMesh,font,playerMesh;
+var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
 
 var camera, scene, renderer, controls;
 var scene_menu,camera_menu;
@@ -36,8 +36,18 @@ var linesArray;
 
 var noPlayingField;
 
-var syringes = [];
-var countSyringesAlive;
+var syringesFull = [];
+var countSyringesFullAlive;
+var syringesEmpty = [];
+var countSyringesEmptyAlive;
+var virus = [];
+var countVirusAlive;
+var masks = [];
+var countMasksAlive;
+var gels = [];
+var countGelsAlive;
+var vaccines = [];
+var countVaccinesAlive;
 
 loader();
 
@@ -46,15 +56,23 @@ function loader(){
   var virusMeshPromise = MODEL.getVirusMesh();
   var playerMeshPromise = MODEL.getPlayerMesh();
   var roomTexturePromise = MODEL.getTexture();
-  var syringePromise = MODEL.getVaccineMesh();
+  var vaccinePromise = MODEL.getVaccineMesh();
+  var maskPromise = MODEL.getMaskMesh();
+  var gelPromise = MODEL.getGelMesh();
+  var syringeEmptyPromise = MODEL.getSyringeEmptyMesh();
+  var syringeFullPromise = MODEL.getSyringeFullMesh();
   var fontPromise = MODEL.getFont();
-  Promise.all([virusMeshPromise, roomTexturePromise,syringePromise,fontPromise,playerMeshPromise]).then(
+  Promise.all([virusMeshPromise,roomTexturePromise,vaccinePromise,fontPromise,playerMeshPromise,maskPromise,gelPromise,syringeFullPromise,syringeEmptyPromise]).then(
     data => {
     virusMesh = data[0];
     roomTexture = data[1];
-    syringeMesh=data[2];
+    vaccineMesh=data[2];
     font=data[3];
     playerMesh=data[4];
+    maskMesh=data[5];
+    gelMesh=data[6];
+    syringeFullMesh=data[7];
+    syringeEmptyMesh=data[8];
     init();
   },error => {
     console.log( 'An error happened:',error );
@@ -97,16 +115,43 @@ function init() {
   only_room = temp[5];
   noPlayingField = temp[6];
 
-  syringeMesh.userData.tag = 'syringe';
+  syringeFullMesh.userData.tag = 'syringeFull';
+  syringeEmptyMesh.userData.tag = 'syringeEmpty';
   virusMesh.userData.tag = 'virus';
+  vaccineMesh.userData.tag = 'vaccine';
+  maskMesh.userData.tag = 'mask';
+  gelMesh.userData.tag = 'gel';
 
-  var nSyringes = 20;
-  //syringes = spreadSyringes(nSyringes, syringes); // calcola le posizioni delle siringhe e le aggiunge alla scena
-  syringes = interaction.spreadingObj(nSyringes, syringeMesh, noPlayingField);
-  countSyringesAlive = syringes.length;
-  for(var i = 0; i<nSyringes; i++){
-      scene.add(syringes[i]);
-  }
+  countMasksAlive = 20;
+  var temp = interaction.spreadingObj(countMasksAlive, maskMesh, noPlayingField, scene);
+  masks = temp[0];
+  noPlayingField = temp[1];
+
+  countGelsAlive = 20;
+  temp = interaction.spreadingObj(countGelsAlive, gelMesh, noPlayingField, scene);
+  gels = temp[0];
+  noPlayingField = temp[1];
+
+  countSyringesFullAlive = 20;
+  temp = interaction.spreadingObj(countSyringesFullAlive, syringeFullMesh, noPlayingField, scene);
+  syringesFull = temp[0];
+  noPlayingField = temp[1];
+
+  countSyringesEmptyAlive = 20;
+  temp = interaction.spreadingObj(countSyringesEmptyAlive, syringeEmptyMesh, noPlayingField, scene);
+  syringesEmpty = temp[0];
+  noPlayingField = temp[1];
+
+  countVirusAlive = 20;
+  temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
+  virus = temp[0];
+  noPlayingField = temp[1];
+
+  countVaccinesAlive = 20;
+  temp  = interaction.spreadingObj(countVaccinesAlive, vaccineMesh, noPlayingField, scene);
+  vaccines = temp[0];
+  noPlayingField = temp[1];
+
 /*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
 
@@ -364,8 +409,23 @@ function update(){
     default:
       console.log("ERROR");
   }
-  interaction.spinObjects(syringes);
-  countSyringesAlive = interaction.interactionPlayerObject(syringes, player.position.x, player.position.z, countSyringesAlive);
+  interaction.spinObjects(syringesFull);
+  countSyringesFullAlive = interaction.interactionPlayerObject(syringesFull, player.position.x, player.position.z, countSyringesFullAlive);
+
+  interaction.spinObjects(syringesEmpty);
+  countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);
+
+  interaction.spinObjects(vaccines);
+  countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
+
+  interaction.spinObjects(masks);
+  countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
+
+  interaction.spinObjects(gels);
+  countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
+
+  interaction.spinObjects(virus);
+  countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
 
   if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){
       scene.add(only_room);

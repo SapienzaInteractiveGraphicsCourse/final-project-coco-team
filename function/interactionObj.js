@@ -1,6 +1,6 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 
-export function spreadingObj(nObject, objectMesh, noPlayingField){
+export function spreadingObj(nObject, objectMesh, noPlayingField, scene){
   var objectsArray = [];
   // Create an array of syringes
   for(var i = 0; i<nObject; i++){
@@ -35,7 +35,29 @@ export function spreadingObj(nObject, objectMesh, noPlayingField){
       //devo rigenerare altri due valori per inserire la siringa
     }
   }
-  return objectsArray;
+  for(var i = 0; i<nObject; i++){
+    noPlayingField = expandNOplayingField(objectsArray[i], noPlayingField);
+    scene.add(objectsArray[i]);
+  }
+
+  return [objectsArray,noPlayingField];
+}
+
+function expandNOplayingField(obj,noPlayingField){
+    var x = obj.position.x;
+    var z = obj.position.z;
+    var x_max = x+(60/2);
+    var x_min = x-(60/2);
+    var z_max = z+(60/2);
+    var z_min = z-(60/2);
+    var noObjects = {
+      "x_max":x_max,
+      "x_min":x_min,
+      "z_max":z_max,
+      "z_min":z_min,
+    };
+    noPlayingField.push(noObjects);
+    return noPlayingField;
 }
 
 export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObjects){
@@ -46,12 +68,13 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
       if(distance<maxDistance*maxDistance){
         objectsArray[i].visible = false;
         aliveObjects = aliveObjects-1;
-        //console.log("Remaining syringes: ",aliveObjects);
-        if(objectsArray[0].userData.tag == 'syringe') document.getElementById('syringe').innerHTML += "&#128137";
-        if(objectsArray[0].userData.tag == 'virus') document.getElementById('virus').innerHTML += "&#129440";
-        if(objectsArray[0].userData.tag == 'gel') document.getElementById('gel').innerHTML += "&#129524";
-        if(objectsArray[0].userData.tag == 'mask') document.getElementById('mask').innerHTML += "&#128567";
-        if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('vaccine').innerHTML += "&#9763";
+        var caughtObjects = objectsArray.length-aliveObjects;
+        if(objectsArray[0].userData.tag == 'syringeEmpty') document.getElementById('syringeEmpty').innerHTML = " EMPTY &#128137 x " + caughtObjects;
+        if(objectsArray[0].userData.tag == 'syringeFull') document.getElementById('syringeFull').innerHTML = "FULL &#128137 x " + caughtObjects;
+        if(objectsArray[0].userData.tag == 'virus') document.getElementById('virus').innerHTML = "&#129440 x " + caughtObjects;
+        if(objectsArray[0].userData.tag == 'gel') document.getElementById('gel').innerHTML = "&#129524 x " + caughtObjects;
+        if(objectsArray[0].userData.tag == 'mask') document.getElementById('mask').innerHTML = "&#128567 x " + caughtObjects;
+        if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('vaccine').innerHTML = "&#9763 x " + caughtObjects;
       }
     }
   }

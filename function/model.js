@@ -3,36 +3,6 @@ import {GLTFLoader} from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js
 import {OBJLoader} from 'https://threejs.org/examples/jsm/loaders/OBJLoader.js';
 import {MTLLoader} from 'https://threejs.org/examples/jsm/loaders/MTLLoader.js';
 
-export function getSyringeMesh () {
-  const myPromise = new Promise((resolve, reject) => {
-    const mtlLoader = new MTLLoader();
-    const objLoader = new OBJLoader();
-    mtlLoader.load('./resources/models/materials.mtl',
-    function(mtl) {
-      mtl.preload();
-      objLoader.setMaterials(mtl);
-      objLoader.load('./resources/models/Syringe.obj',
-      function (root){
-        root.scale.x=200;
-        root.scale.y=200;
-        root.scale.z=200;
-        resolve(root);
-      },
-      function ( xhr ) {
-      },
-      function ( error ) {
-        reject(error);
-      });
-    },
-    function ( xhr ) {
-    },
-    function ( error ) {
-      reject(error);
-    });
-  });
-  return myPromise;
-}
-
 export function getTexture (){
   const myPromise = new Promise((resolve, reject) => {
     var textureLoader = new THREE.TextureLoader();
@@ -88,7 +58,7 @@ export function getVirusMesh () {
 export function getPlayerMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/Player.gltf',
+    gltfLoader.load('./resources/improved_models/player.gltf',
     function ( gltf ) {
       let scale=1.5;
       const playerMesh = gltf.scene.children.find((child) => child.name === "Body");
@@ -116,6 +86,90 @@ export function getVaccineMesh () {
       VaccineMesh.scale.set(VaccineMesh.scale.x * scale, VaccineMesh.scale.y * scale, VaccineMesh.scale.z * scale);
       VaccineMesh.position.y += 40;
       resolve(VaccineMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getGelMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/Gel.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const GelMesh = gltf.scene;
+      GelMesh.scale.set(GelMesh.scale.x * scale, GelMesh.scale.y * scale, GelMesh.scale.z * scale);
+      GelMesh.position.y += 40;
+      resolve(GelMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getMaskMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/Face_Mask.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const MaskMesh = gltf.scene;
+      MaskMesh.scale.set(MaskMesh.scale.x * scale, MaskMesh.scale.y * scale, MaskMesh.scale.z * scale);
+      MaskMesh.position.y += 40;
+      resolve(MaskMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getSyringeFullMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/syringe_full.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const SyringeFullMesh = gltf.scene;
+      SyringeFullMesh.scale.set(SyringeFullMesh.scale.x * scale, SyringeFullMesh.scale.y * scale, SyringeFullMesh.scale.z * scale);
+      SyringeFullMesh.position.y += 40;
+      resolve(SyringeFullMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getSyringeEmptyMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/syringe_empty.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const SyringeEmptyMesh = gltf.scene;
+      SyringeEmptyMesh.scale.set(SyringeEmptyMesh.scale.x * scale, SyringeEmptyMesh.scale.y * scale, SyringeEmptyMesh.scale.z * scale);
+      SyringeEmptyMesh.position.y += 40;
+      resolve(SyringeEmptyMesh);
     },
     function ( xhr ) {
     },
