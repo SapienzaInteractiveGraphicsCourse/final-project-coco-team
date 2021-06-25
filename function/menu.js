@@ -1,7 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
-export function init(font,roomTexture){
+export function init(font,roomTexture,playerMesh){
 
   const material_0 = new THREE.MeshPhongMaterial( { color: 0x800000, emissive:0xff0000, emissiveIntensity:0.3} );
   const material_1 = new THREE.MeshPhongMaterial( { color: 0x800000} );
@@ -17,6 +17,20 @@ export function init(font,roomTexture){
 
   camera.position.y = 0;
   camera.position.z = 50;
+/*---------------------------DOCTOR STUFF---------------------------*/
+  let menu_player = playerMesh.clone();
+  menu_player.needsUpdate=true;
+  menu_player.position.set(-70,15,-80);
+  menu_player.rotation.y=Math.PI*-7/8;
+  console.log(menu_player);
+  menu_player.children[0].rotation.y=Math.PI*-1/8;
+  menu_player.children[1].rotation.set(0,Math.PI*-3/8,Math.PI*+2/10);
+  menu_player.children[1].children[0].rotation.set(0,0,Math.PI*-2/10);
+  menu_player.children[2].rotation.set(Math.PI*+2/10,Math.PI*+3/8,0);
+  console.log(menu_player.children[0]);
+  scene.add(menu_player);
+
+/*---------------------------TITLE STUFF---------------------------*/
 
   const title_geometry = new THREE.TextGeometry( 'DOWN THE VEINS!', {
     font:font,
@@ -34,7 +48,7 @@ export function init(font,roomTexture){
 /*---------------------------START BUTTON STUFF---------------------------*/
   const start_button_material = material_1.clone();
   start_button_material.needsUpdate=true;
-  const start_button_geometry = new THREE.BoxGeometry(50, 10, 10);
+  const start_button_geometry = new THREE.BoxGeometry(40, 10, 10);
   const start_button_mesh = new THREE.Mesh( start_button_geometry, start_button_material);
   start_button_mesh.position.y+=10;
   ButtonArray.push(start_button_mesh.uuid);
@@ -60,7 +74,7 @@ export function init(font,roomTexture){
 /*---------------------------OPTION BUTTON STUFF---------------------------*/
   const option_button_material = material_1.clone();
   option_button_material.needsUpdate=true;
-  const option_button_geometry = new THREE.BoxGeometry(50, 10, 10);
+  const option_button_geometry = new THREE.BoxGeometry(40, 10, 10);
   const option_button_mesh = new THREE.Mesh( option_button_geometry, option_button_material);
   option_button_mesh.position.y-=10;
   ButtonArray.push(option_button_mesh.uuid);
@@ -91,7 +105,7 @@ export function init(font,roomTexture){
   scene.add(light1);
 
 /*---------------------------ROOM STUFF---------------------------*/
-  var room1 = room.getRoom(100,100,100,roomTexture);
+  var room1 = room.getRoom(200,300,200,roomTexture);
   for(let x = 0; x< room1.length; x++){
     room1[x].position.y-=30;
   }
