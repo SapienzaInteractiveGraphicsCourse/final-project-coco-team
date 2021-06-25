@@ -47,6 +47,11 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
         objectsArray[i].visible = false;
         aliveObjects = aliveObjects-1;
         //console.log("Remaining syringes: ",aliveObjects);
+        if(objectsArray[0].userData.tag == 'syringe') document.getElementById('syringe').innerHTML += "&#128137";
+        if(objectsArray[0].userData.tag == 'virus') document.getElementById('virus').innerHTML += "&#129440";
+        if(objectsArray[0].userData.tag == 'gel') document.getElementById('gel').innerHTML += "&#129524";
+        if(objectsArray[0].userData.tag == 'mask') document.getElementById('mask').innerHTML += "&#128567";
+        if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('vaccine').innerHTML += "&#9763";
       }
     }
   }

@@ -35,6 +35,7 @@ var using_only_room = false;
 var linesArray;
 
 var noPlayingField;
+
 var syringes = [];
 var countSyringesAlive;
 
@@ -96,9 +97,9 @@ function init() {
   only_room = temp[5];
   noPlayingField = temp[6];
 
+  syringeMesh.userData.tag = 'syringe';
+  virusMesh.userData.tag = 'virus';
 
-
-  //syringeMesh.userData.tag = 'syringe';
   var nSyringes = 20;
   //syringes = spreadSyringes(nSyringes, syringes); // calcola le posizioni delle siringhe e le aggiunge alla scena
   syringes = interaction.spreadingObj(nSyringes, syringeMesh, noPlayingField);
