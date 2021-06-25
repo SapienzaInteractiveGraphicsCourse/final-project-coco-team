@@ -182,7 +182,12 @@ function init() {
   document.addEventListener( 'mousemove', onPointerMove );
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
-  window.addEventListener('keydown',function(event){enabled=controls.keypressedAgent(event,enabled);}, false);
+  window.addEventListener('keydown',function(event){
+    temp=controls.keypressedAgent(event,enabled,stato,end_time,time_remaining);
+    enabled=temp[0];
+    stato=temp[1];
+    end_time=temp[2];
+  }, false);
   window.addEventListener('keyup',function(event){enabled=controls.keyreleasedAgent(event,enabled);}, false);
 
 /*---------------------------ANIMATION LOOP---------------------------*/
@@ -351,33 +356,38 @@ function update(){
       for (let x=0; x<linesArray.length;x++){
         debug.updateRay(linesArray[x],player);
       }
+
+/*---------------------------INTERACTION OBJECTS---------------------------*/
+      interaction.spinObjects(syringesFull);
+      countSyringesFullAlive = interaction.interactionPlayerObject(syringesFull, player.position.x, player.position.z, countSyringesFullAlive);
+
+      interaction.spinObjects(syringesEmpty);
+      countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);
+
+      interaction.spinObjects(vaccines);
+      countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
+
+      interaction.spinObjects(masks);
+      countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
+
+      interaction.spinObjects(gels);
+      countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
+
+      interaction.spinObjects(virus);
+      countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
+
+      if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){
+          scene.add(only_room);
+          scene.remove(scene.children.find((child) => child.name === "full_room"));
+          using_only_room = true;
+        }
+
+      break;
+    case 2:
       break;
     default:
       console.log("ERROR");
   }
-  interaction.spinObjects(syringesFull);
-  countSyringesFullAlive = interaction.interactionPlayerObject(syringesFull, player.position.x, player.position.z, countSyringesFullAlive);
-
-  interaction.spinObjects(syringesEmpty);
-  countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);
-
-  interaction.spinObjects(vaccines);
-  countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
-
-  interaction.spinObjects(masks);
-  countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
-
-  interaction.spinObjects(gels);
-  countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
-
-  interaction.spinObjects(virus);
-  countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
-
-  if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){
-      scene.add(only_room);
-      scene.remove(scene.children.find((child) => child.name === "full_room"));
-      using_only_room = true;
-    }
 }
 
 function checkCollision(direction){

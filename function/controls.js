@@ -12,7 +12,7 @@ export function init(){
   };
   return enabled;
 }
-export function keypressedAgent(event,enabled) {
+export function keypressedAgent(event,enabled,stato,end_time,time_remaining) {
   switch(event.key) {
     case 'q':
       enabled[event.key]=true;
@@ -48,7 +48,7 @@ export function keypressedAgent(event,enabled) {
       enabled[event.key]=true;
       break;
   }
-  return enabled;
+  return [enabled,stato,end_time];
 }
 export function keyreleasedAgent(event,enabled) {
   switch(event.key) {
