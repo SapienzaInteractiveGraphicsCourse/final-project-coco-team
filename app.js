@@ -280,7 +280,8 @@ function update(){
       time_remaining=timer.timerUpdate(end_time);
 
       var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
-      var cameraPosition = checkCameraCollision(oldCameraPosition);
+      //var cameraPosition = checkCameraCollision(oldCameraPosition);
+      var cameraPosition = oldCameraPosition
       var camera_Incline = new THREE.Euler( -Math.atan((cameraTranslation.y-40)/camera.position.z), 0, 0, 'XYZ' );
       var cameraVerticalRotation = new THREE.Quaternion().setFromEuler(camera_Incline);
 
@@ -346,7 +347,7 @@ function update(){
       if (isRotating||isMoving){
         //camera rotation
         camera.quaternion.copy(player.quaternion);
-        camera.quaternion.multiply(cameraVerticalRotation);
+        //camera.quaternion.multiply(cameraVerticalRotation);
         //computing new camera location
         cameraPosition.applyQuaternion(player.quaternion);
         camera.position.copy(player.position);
