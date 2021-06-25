@@ -100,3 +100,9 @@ export function spinObjects(Array){
     Array[x].applyQuaternion(rotationQuaternion);
   }
 }
+
+export function invisibleToVirus(nAliveObj, nInitialObj){
+  var remainingObj = nInitialObj - nAliveObj - 1;
+  if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('vaccine').innerHTML = "&#9763 x " + remainingObj;
+
+}

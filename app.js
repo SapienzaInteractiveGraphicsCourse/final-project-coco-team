@@ -7,6 +7,7 @@ import * as debug from "./function/debug.js";
 import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
 import * as controls from "./function/controls.js"
+import * as animation from "./function/animation.js"
 
 //resource that has to be loaded
 var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
@@ -50,6 +51,8 @@ var vaccines = [];
 var countVaccinesAlive;
 
 var end_time,time_remaining;
+
+var mixer,clock;
 
 loader();
 
@@ -147,6 +150,11 @@ function init() {
   temp  = interaction.spreadingObj(countVaccinesAlive, vaccineMesh, noPlayingField, scene);
   vaccines = temp[0];
   noPlayingField = temp[1];
+
+  console.log(player);
+  var t = animation.walkingPlayer(player,mixer,clock);
+  mixer = t[0];
+  clock = t[1];
 
 /*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
@@ -246,6 +254,7 @@ function render(){
       break;
     case 1:
       renderer.render( scene, camera );
+      mixer.update(clock.getDelta());
       break;
     case 2:
       renderer.render( scene, camera );
