@@ -26,7 +26,8 @@ export function spreadingObj(nObject, objectMesh, noPlayingField){
       }
     }
     if(values_ok){  //vuol dire che è fuori a tutti gli ostacoli
-      objectsArray[i].position.set(x,0,z); //accetto questi valori e inserisco una siringa li
+      objectsArray[i].position.set(x,55,z); //accetto questi valori e inserisco una siringa li
+      objectsArray[i].rotation.set(Math.PI/6,0,Math.PI/6);
       i++; //passo alla siringa successiva
     }
     else{
@@ -50,4 +51,13 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
     }
   }
   return aliveObjects;
+}
+
+export function spinObjects(Array){
+  for (let x=0;x<Array.length;x++){
+    let rotationEuler = new THREE.Euler( 0, Math.PI/25, 0, 'XYZ' );
+    let rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromEuler(rotationEuler);
+    Array[x].applyQuaternion(rotationQuaternion);
+  }
 }

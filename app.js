@@ -45,7 +45,7 @@ function loader(){
   var virusMeshPromise = MODEL.getVirusMesh();
   var playerMeshPromise = MODEL.getPlayerMesh();
   var roomTexturePromise = MODEL.getTexture();
-  var syringePromise = MODEL.getSyringeMesh();
+  var syringePromise = MODEL.getVaccineMesh();
   var fontPromise = MODEL.getFont();
   Promise.all([virusMeshPromise, roomTexturePromise,syringePromise,fontPromise,playerMeshPromise]).then(
     data => {
@@ -92,7 +92,7 @@ function init() {
   camera = temp [1];
   player = temp[2];
   cameraTranslation = temp[3];
-  full_room = temp[4]
+  full_room = temp[4];
   only_room = temp[5];
   noPlayingField = temp[6];
 
@@ -363,7 +363,7 @@ function update(){
     default:
       console.log("ERROR");
   }
-
+  interaction.spinObjects(syringes);
   countSyringesAlive = interaction.interactionPlayerObject(syringes, player.position.x, player.position.z, countSyringesAlive);
 
   if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!"){

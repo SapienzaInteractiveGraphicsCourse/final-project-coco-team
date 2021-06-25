@@ -68,8 +68,9 @@ export function getVirusMesh () {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./resources/improved_models/Virus.gltf',
     function ( gltf ) {
+      let scale=0.4;
       const virusMesh = gltf.scene.children.find((child) => child.name === "Body");
-      virusMesh.scale.set(virusMesh.scale.x * 0.4, virusMesh.scale.y * 0.4, virusMesh.scale.z * 0.4);
+      virusMesh.scale.set(virusMesh.scale.x * scale, virusMesh.scale.y * scale, virusMesh.scale.z * scale);
       virusMesh.position.y = 60;
       virusMesh.rotation.y = Math.PI/2;
       resolve(virusMesh);
@@ -87,13 +88,34 @@ export function getVirusMesh () {
 export function getPlayerMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/player.gltf',
+    gltfLoader.load('./resources/improved_models/Player.gltf',
     function ( gltf ) {
       let scale=1.5;
       const playerMesh = gltf.scene.children.find((child) => child.name === "Body");
       playerMesh.scale.set(playerMesh.scale.x * scale, playerMesh.scale.y * scale, playerMesh.scale.z * scale);
       playerMesh.position.y += 15*scale;
       resolve(playerMesh);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}
+
+export function getVaccineMesh () {
+  const myPromise = new Promise((resolve, reject) => {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('./resources/improved_models/Vaccine.gltf',
+    function ( gltf ) {
+      let scale=1.5;
+      const VaccineMesh = gltf.scene;
+      VaccineMesh.scale.set(VaccineMesh.scale.x * scale, VaccineMesh.scale.y * scale, VaccineMesh.scale.z * scale);
+      VaccineMesh.position.y += 40;
+      resolve(VaccineMesh);
     },
     function ( xhr ) {
     },
