@@ -9,3 +9,5 @@ Animazioni player
 Dottore menù aggiornare pose
 Comandi menu(opzioni/tutorial)
 Tasti e effetti oggetti
+Fog
+Luci
