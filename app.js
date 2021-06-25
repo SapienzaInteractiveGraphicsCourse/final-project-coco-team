@@ -49,6 +49,8 @@ var countGelsAlive;
 var vaccines = [];
 var countVaccinesAlive;
 
+var end_time,time_remaining;
+
 loader();
 
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
@@ -89,6 +91,8 @@ function init() {
     "a":false,
     "s":false,
     "d":false,
+    "esc":false,
+    "r":0,
     "l":false
   };
 
@@ -100,7 +104,7 @@ function init() {
   document.body.appendChild(renderer.domElement);
 
 /*---------------------------MAIN MENU STUFF---------------------------*/
-  var temp = menu.init(font,roomTexture);
+  var temp = menu.init(font,roomTexture,playerMesh);
   scene_menu = temp[0];
   camera_menu = temp [1];
   ButtonArrayId = temp [2];
@@ -215,6 +219,18 @@ function keypressedAgent(event) {
     case 'd':
       enabled[event.key]=true;
       break;
+    case 'Escape':
+      enabled[event.key]=!enabled[event.key];
+      if (enabled[event.key]) stato=2;
+      else {
+        stato=1;
+        end_time= new Date().getTime() + time_remaining;
+      }
+      break;
+    case 'r':
+      enabled[event.key]++;
+      if (enabled[event.key]==3) enabled[event.key] = 0;
+      break;
     case 'l':
       enabled[event.key]=true;
       break;
@@ -271,7 +287,7 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          timer.setTimer(0,20);
+          end_time=timer.setTimer(2,0);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -286,7 +302,11 @@ function onMouseClick( event ) {
 }
 
 function animate() {
-   requestAnimationFrame( animate );
+   setTimeout( function() {
+
+       requestAnimationFrame( animate );
+
+   }, 1000 / 60 );
    render();
    update();
  }
@@ -297,6 +317,9 @@ function render(){
       renderer.render( scene_menu, camera_menu );
       break;
     case 1:
+      renderer.render( scene, camera );
+      break;
+    case 2:
       renderer.render( scene, camera );
       break;
     default:
@@ -328,6 +351,8 @@ function update(){
 
       break;
     case 1:
+      time_remaining=timer.timerUpdate(end_time);
+
       var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
       var cameraPosition = checkCameraCollision(oldCameraPosition);
       var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );

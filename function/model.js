@@ -100,7 +100,7 @@ export function getVaccineMesh () {
 export function getGelMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/Gel.gltf',
+    gltfLoader.load('./resources/improved_models/gel.gltf',
     function ( gltf ) {
       let scale=1.5;
       const GelMesh = gltf.scene;

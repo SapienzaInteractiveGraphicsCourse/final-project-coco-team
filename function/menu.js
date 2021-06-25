@@ -20,14 +20,12 @@ export function init(font,roomTexture,playerMesh){
 /*---------------------------DOCTOR STUFF---------------------------*/
   let menu_player = playerMesh.clone();
   menu_player.needsUpdate=true;
-  menu_player.position.set(-70,15,-80);
+  menu_player.position.set(-70,0,-80);
   menu_player.rotation.y=Math.PI*-7/8;
-  console.log(menu_player);
   menu_player.children[0].rotation.y=Math.PI*-1/8;
   menu_player.children[1].rotation.set(0,Math.PI*-3/8,Math.PI*+2/10);
   menu_player.children[1].children[0].rotation.set(0,0,Math.PI*-2/10);
   menu_player.children[2].rotation.set(Math.PI*+2/10,Math.PI*+3/8,0);
-  console.log(menu_player.children[0]);
   scene.add(menu_player);
 
 /*---------------------------TITLE STUFF---------------------------*/
