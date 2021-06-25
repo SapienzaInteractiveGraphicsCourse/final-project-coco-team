@@ -2,14 +2,9 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
 export function init(roomTexture,playerMesh){
-
-
   var scene,camera;
   scene = new THREE.Scene();
   scene.background = new THREE.Color('white');
-
-
-
 
   const light = new THREE.PointLight( 0xffffff, 4, 1500 );
   light.position.set(0, 1000, 0);
@@ -30,9 +25,9 @@ export function init(roomTexture,playerMesh){
   /* CAMERA STUFF*/
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-  var cameraTranslation = new THREE.Vector3( 0, 40, 60 );
-  camera.position.set(0,cameraTranslation.y+playerMesh.position.y,cameraTranslation.z);
-  camera.rotation.x=-Math.atan(cameraTranslation.y/camera.position.z);
+  var cameraTranslation = new THREE.Vector3( 0, 60, 60 );
+  camera.position.set(0,cameraTranslation.y,cameraTranslation.z);
+  camera.rotation.x=-Math.atan((cameraTranslation.y-40)/camera.position.z);
 
   return [scene, camera, playerMesh, cameraTranslation, full_room, only_room, noPlayingField];
 }

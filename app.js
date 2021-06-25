@@ -1,5 +1,4 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-import {OrbitControls} from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 import * as MODEL from "./function/model.js";
 import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";
@@ -7,11 +6,12 @@ import * as room from "./function/room.js";
 import * as debug from "./function/debug.js";
 import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
+import * as controls from "./function/controls.js"
 
 //resource that has to be loaded
 var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
 
-var camera, scene, renderer, controls;
+var camera, scene, renderer;
 var scene_menu,camera_menu;
 
 var stato;
@@ -84,17 +84,7 @@ function loader(){
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
   stato=0;
-  enabled={
-    "q":false,
-    "w":false,
-    "e":false,
-    "a":false,
-    "s":false,
-    "d":false,
-    "esc":false,
-    "r":0,
-    "l":false
-  };
+  enabled=controls.init();
 
   pointer = new THREE.Vector2();
 
@@ -192,76 +182,14 @@ function init() {
   document.addEventListener( 'mousemove', onPointerMove );
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
-  window.addEventListener('keydown', keypressedAgent, false);
-  window.addEventListener('keyup', keyreleasedAgent, false);
+  window.addEventListener('keydown',function(event){enabled=controls.keypressedAgent(event,enabled);}, false);
+  window.addEventListener('keyup',function(event){enabled=controls.keyreleasedAgent(event,enabled);}, false);
 
 /*---------------------------ANIMATION LOOP---------------------------*/
   window.requestAnimationFrame(animate);
 }
 
-function keypressedAgent(event) {
-  switch(event.key) {
-    case 'q':
-      enabled[event.key]=true;
-      break;
-    case 'w':
-      enabled[event.key]=true;
-      break;
-    case 'e':
-      enabled[event.key]=true;
-      break;
-    case 'a':
-      enabled[event.key]=true;
-      break;
-    case 's':
-      enabled[event.key]=true;
-      break;
-    case 'd':
-      enabled[event.key]=true;
-      break;
-    case 'Escape':
-      enabled[event.key]=!enabled[event.key];
-      if (enabled[event.key]) stato=2;
-      else {
-        stato=1;
-        end_time= new Date().getTime() + time_remaining;
-      }
-      break;
-    case 'r':
-      enabled[event.key]++;
-      if (enabled[event.key]==3) enabled[event.key] = 0;
-      break;
-    case 'l':
-      enabled[event.key]=true;
-      break;
-  }
-}
 
-function keyreleasedAgent(event) {
-  switch(event.key) {
-    case 'q':
-      enabled[event.key]=false;
-      break;
-    case 'w':
-      enabled[event.key]=false;
-      break;
-    case 'e':
-      enabled[event.key]=false;
-      break;
-    case 'a':
-      enabled[event.key]=false;
-      break;
-    case 's':
-      enabled[event.key]=false;
-      break;
-    case 'd':
-      enabled[event.key]=false;
-      break;
-    case 'l':
-      enabled[event.key]=false;
-      break;
-  }
-}
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -275,10 +203,8 @@ function onWindowResize() {
 }
 
 function onPointerMove( event ) {
-
   pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 }
 
 function onMouseClick( event ) {
@@ -293,11 +219,6 @@ function onMouseClick( event ) {
           console.log("Option");
       }
       break;
-    case 1:
-      renderer.render( scene, camera );
-      break;
-    default:
-      console.log("pippo");
   }
 }
 
@@ -305,10 +226,10 @@ function animate() {
    setTimeout( function() {
 
        requestAnimationFrame( animate );
+       render();
+       update();
 
    }, 1000 / 60 );
-   render();
-   update();
  }
 
 function render(){
@@ -355,7 +276,7 @@ function update(){
 
       var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
       var cameraPosition = checkCameraCollision(oldCameraPosition);
-      var camera_Incline = new THREE.Euler( -Math.atan((cameraPosition.y)/cameraPosition.z), 0, 0, 'XYZ' );
+      var camera_Incline = new THREE.Euler( -Math.atan((cameraTranslation.y-40)/camera.position.z), 0, 0, 'XYZ' );
       var cameraVerticalRotation = new THREE.Quaternion().setFromEuler(camera_Incline);
 
       var isRotating,isMoving;

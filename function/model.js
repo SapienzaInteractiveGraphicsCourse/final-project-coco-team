@@ -36,7 +36,7 @@ export function getFont (){
 export function getVirusMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/Virus.gltf',
+    gltfLoader.load('./resources/models/Virus.gltf',
     function ( gltf ) {
       let scale=0.4;
       const virusMesh = gltf.scene.children.find((child) => child.name === "Body");
@@ -58,7 +58,7 @@ export function getVirusMesh () {
 export function getPlayerMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/player.gltf',
+    gltfLoader.load('./resources/models/Player.gltf',
     function ( gltf ) {
       let scale=1.5;
       const playerMesh = gltf.scene.children.find((child) => child.name === "Body");
@@ -79,7 +79,7 @@ export function getPlayerMesh () {
 export function getVaccineMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/Vaccine.gltf',
+    gltfLoader.load('./resources/models/Vaccine.gltf',
     function ( gltf ) {
       let scale=1.5;
       const VaccineMesh = gltf.scene;
@@ -100,7 +100,7 @@ export function getVaccineMesh () {
 export function getGelMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/gel.gltf',
+    gltfLoader.load('./resources/models/Gel.gltf',
     function ( gltf ) {
       let scale=1.5;
       const GelMesh = gltf.scene;
@@ -121,7 +121,7 @@ export function getGelMesh () {
 export function getMaskMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/Face_Mask.gltf',
+    gltfLoader.load('./resources/models/Face_Mask.gltf',
     function ( gltf ) {
       let scale=1.5;
       const MaskMesh = gltf.scene;
@@ -142,7 +142,7 @@ export function getMaskMesh () {
 export function getSyringeFullMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/syringe_full.gltf',
+    gltfLoader.load('./resources/models/Syringe_full.gltf',
     function ( gltf ) {
       let scale=1.5;
       const SyringeFullMesh = gltf.scene;
@@ -163,7 +163,7 @@ export function getSyringeFullMesh () {
 export function getSyringeEmptyMesh () {
   const myPromise = new Promise((resolve, reject) => {
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('./resources/improved_models/syringe_empty.gltf',
+    gltfLoader.load('./resources/models/Syringe_empty.gltf',
     function ( gltf ) {
       let scale=1.5;
       const SyringeEmptyMesh = gltf.scene;
