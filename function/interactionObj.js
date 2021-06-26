@@ -101,8 +101,24 @@ export function spinObjects(Array){
   }
 }
 
-export function invisibleToVirus(nAliveObj, nInitialObj){
-  var remainingObj = nInitialObj - nAliveObj - 1;
+export function vaccineVirus(nAliveObj, objectsArray){
+  var remainingObj = objectsArray.length - nAliveObj - 1;
   if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('vaccine').innerHTML = "&#9763 x " + remainingObj;
+  return nAliveObj+1;
+}
+
+export function maskVirus(masks,countMasksAlive){
+  //console.log(countMasksAlive);
+  var remain = masks.length - countMasksAlive - 1;
+  document.getElementById("mask").innerHTML = "&#128567 x " + remain;
+  //countMasksAlive++;
+  //console.log(countMasksAlive);
+  return countMasksAlive+1;
 
 }
+
+// export function contactWithVirus(remainingTime){
+//   var remainingObj = objectsArray.length - nAliveObj - 1;
+//   if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('contact').innerHTML = "&#128156 " + remainingLive + "%";
+//   return nAliveObj+1;
+// }

@@ -53,6 +53,7 @@ var countVaccinesAlive;
 var end_time,time_remaining;
 
 var mixer,clock;
+var remainingLive = 100;
 
 loader();
 
@@ -151,7 +152,7 @@ function init() {
   vaccines = temp[0];
   noPlayingField = temp[1];
 
-  console.log(player);
+  //console.log(player);
   var t = animation.walkingPlayer(player,mixer,clock);
   mixer = t[0];
   clock = t[1];
@@ -193,10 +194,13 @@ function init() {
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown',function(event){
-    temp=controls.keypressedAgent(event,enabled,stato,end_time,time_remaining);
+    temp=controls.keypressedAgent(event,enabled,stato,end_time,time_remaining,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks);
     enabled=temp[0];
     stato=temp[1];
     end_time=temp[2];
+    countVirusAlive=temp[3];
+    countVaccinesAlive=temp[4];
+    countMasksAlive=temp[5];
   }, false);
   window.addEventListener('keyup',function(event){enabled=controls.keyreleasedAgent(event,enabled);}, false);
 
@@ -228,7 +232,7 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          end_time=timer.setTimer(0,30);
+          end_time=timer.setTimer(1,0);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -370,12 +374,6 @@ function update(){
       }
 
 /*---------------------------INTERACTION OBJECTS---------------------------*/
-      /*interaction.spinObjects(syringesFull);
-      countSyringesFullAlive = interaction.interactionPlayerObject(syringesFull, player.position.x, player.position.z, countSyringesFullAlive);
-
-      interaction.spinObjects(syringesEmpty);
-      countSyringesEmptyAlive = interaction.interactionPlayerObject(syringesEmpty, player.position.x, player.position.z, countSyringesEmptyAlive);*/
-
       if(!using_only_room){
         interaction.spinObjects(vaccines);
         countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
@@ -386,10 +384,12 @@ function update(){
         interaction.spinObjects(gels);
         countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
       }
-      if(using_only_room){
-        interaction.spinObjects(virus);
-        countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive);
-      }
+      // if(using_only_room){
+      //   if(/*STO IN UN INTORNO DEL VIRUS E NON VIENE NESSUN EVENTO LEGATO ALLA MASCHERINA*/){
+      //     remainingLive-=5;
+      //     document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
+      //   }
+      // }
 
       if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!" && !using_only_room){
           scene.add(only_room);
@@ -405,6 +405,8 @@ function update(){
           noPlayingField = temp[1];
 
           using_only_room = true;
+
+          document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
         }
 
       break;

@@ -1,3 +1,5 @@
+import * as interaction from "./interactionObj.js";
+
 export function init(){
   var enabled={
     "q":false,
@@ -6,13 +8,14 @@ export function init(){
     "a":false,
     "s":false,
     "d":false,
-    "esc":false,
+    "escape":false,
     "r":0,
-    "l":false
+    "l":false,
+    "z":false
   };
   return enabled;
 }
-export function keypressedAgent(event,enabled,stato,end_time,time_remaining) {
+export function keypressedAgent(event,enabled,stato,end_time,time_remaining,virus,playerX,playerZ,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks) {
   switch(event.key) {
     case 'q':
       enabled[event.key]=true;
@@ -47,8 +50,25 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining) {
     case 'l':
       enabled[event.key]=true;
       break;
+    case 'z':
+      enabled[event.key]=!enabled[event.key];
+      if (enabled[event.key]){
+        if(vaccines.length - countVaccinesAlive > 0){ //va fatto il check se si è in un intorno del virus
+          countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive);
+          countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
+        }
+      }
+      break;
+    case 'x':
+      enabled[event.key]=!enabled[event.key];
+      if (enabled[event.key]){
+        if(masks.length - countMasksAlive > 0){
+          countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
+        }
+      }
+      break;
   }
-  return [enabled,stato,end_time];
+  return [enabled,stato,end_time,countVirusAlive,countVaccinesAlive,countMasksAlive];
 }
 export function keyreleasedAgent(event,enabled) {
   switch(event.key) {
