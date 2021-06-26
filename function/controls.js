@@ -9,9 +9,10 @@ export function init(){
     "s":false,
     "d":false,
     "escape":false,
-    "r":0,
+    "r":1,
     "l":false,
-    "z":false
+    "z":false,
+    "old":1
   };
   return enabled;
 }
@@ -37,15 +38,18 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
       break;
     case 'Escape':
       enabled[event.key]=!enabled[event.key];
-      if (enabled[event.key]) stato=2;
+      if (enabled[event.key]) {
+        enabled.old=stato;
+        stato=2;
+      }
       else {
-        stato=1;
+        stato=enabled.old;
         end_time= new Date().getTime() + time_remaining;
       }
       break;
     case 'r':
       enabled[event.key]++;
-      if (enabled[event.key]==3) enabled[event.key] = 0;
+      if (enabled[event.key]==2) enabled[event.key] = 0;
       break;
     case 'l':
       enabled[event.key]=true;
@@ -67,6 +71,7 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
   }
   return [enabled,stato,end_time,countVirusAlive,countVaccinesAlive,countMasksAlive,remainingLive];
 }
+
 export function keyreleasedAgent(event,enabled) {
   switch(event.key) {
     case 'q':

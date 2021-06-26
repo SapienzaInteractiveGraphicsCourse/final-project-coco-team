@@ -3,12 +3,12 @@ import * as MODEL from "./function/model.js";
 import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";
 import * as room from "./function/room.js";
-import * as debug from "./function/debug.js";
 import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
 import * as controls from "./function/controls.js";
 import * as animation from "./function/animation.js";
-import * as player_func from "./function/player.js"
+import * as player_func from "./function/player.js";
+import * as camera_func from "./function/camera.js";
 
 //resource that has to be loaded
 var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
@@ -24,17 +24,14 @@ var ButtonArrayId;
 var player;
 var cameraTranslation;
 var enabled;
-var collision;
 
-var RayCasterArray;
+var RayCasterArray,RayCasterCameraArray;
 
 var CameraRayCast;
 
 var full_room;
 var only_room;
 var using_only_room = false;
-
-var linesArray;
 
 var noPlayingField;
 
@@ -162,33 +159,7 @@ function init() {
   raycaster=new THREE.Raycaster();
 
 /*---------------------------PLAYER RAYCASTER---------------------------*/
-  RayCasterArray = [];
-  let rayNumbers = 8;
-  for (let x=0;x<rayNumbers;x++){
-    let angle= -x*(Math.PI*2/rayNumbers);
-    let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
-    let rotationQuaternion = new THREE.Quaternion();
-    rotationQuaternion.setFromEuler(rotationEuler);
-    let RayDirection = new THREE.Vector3( 1, 0, 0 );
-    RayDirection.applyQuaternion(rotationQuaternion);
-    let RayCasterElement = new THREE.Raycaster(player.position,RayDirection);
-    RayCasterArray.push(RayCasterElement);
-  }
-
-  collision=[];
-  var collision_type={
-    "isColliding": false,
-    "distance":40,
-    "normal": new THREE.Vector3(0,0,0)
-  };
-  for (let x=0;x<RayCasterArray.length;x++){
-    collision.push(JSON.parse(JSON.stringify(collision_type)));
-  }
-
-  linesArray=[];
-  for (let x=0;x<rayNumbers;x++){
-    linesArray.push(debug.drawRay(x,scene,player,RayCasterArray));
-  }
+  RayCasterArray = player_func.initPlayerRay();
 
 /*---------------------------EVENT LISTENER---------------------------*/
   document.addEventListener( 'mousemove', onPointerMove );
@@ -271,6 +242,8 @@ function render(){
 
 function update(){
   switch(stato) {
+
+    //MAIN MENU
     case 0:
       raycaster.setFromCamera( pointer, camera_menu );
       const intersects = raycaster.intersectObjects( scene_menu.children);
@@ -292,18 +265,13 @@ function update(){
       }
 
       break;
+
+    //PUZZLE PART
     case 1:
       time_remaining=timer.timerUpdate(end_time);
 
-      var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
-      //var cameraPosition = checkCameraCollision(oldCameraPosition);
-      var cameraPosition = oldCameraPosition;
-      var camera_Incline = new THREE.Euler( -Math.atan((cameraTranslation.y-40)/camera.position.z), 0, 0, 'XYZ' );
-      var cameraVerticalRotation = new THREE.Quaternion().setFromEuler(camera_Incline);
-
       var isRotating,isMoving;
-
-/*---------------------------PLAYER ROTATION---------------------------*/
+      /*---------------------------PLAYER ROTATION---------------------------*/
       var rotation = 0;
       if (enabled.q){
         rotation += Math.PI/60;
@@ -314,18 +282,10 @@ function update(){
 
       isRotating=rotation!=0;
       if (isRotating){
-        //player rotation
         player.rotation.y += rotation;
-
-        for (let x=0;x<RayCasterArray.length;x++){
-          let rotationEuler = new THREE.Euler( 0, rotation, 0, 'XYZ' );
-          let rotationQuaternion = new THREE.Quaternion();
-          rotationQuaternion.setFromEuler(rotationEuler);
-          RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
-        }
-
+        RayCasterArray=player_func.updatePlayerRayRotation(rotation,RayCasterArray);
       }
-/*---------------------------PLAYER MOVEMENT---------------------------*/
+      /*---------------------------PLAYER MOVEMENT---------------------------*/
       var dirZ = new THREE.Vector3(0,0,2);
       var dirX = new THREE.Vector3(2,0,0);
 
@@ -335,54 +295,32 @@ function update(){
       var direction = new THREE.Vector3(0,0,0);
       var movingDirection;
 
-      if (enabled.w){
-        direction.sub(dirZ);
-      }
-      if (enabled.a){
-        direction.sub(dirX);
-      }
-      if (enabled.s){
-        direction.add(dirZ);
-      }
-      if (enabled.d){
-        direction.add(dirX);
-      }
+      if (enabled.w) direction.sub(dirZ);
+      if (enabled.a) direction.sub(dirX);
+      if (enabled.s) direction.add(dirZ);
+      if (enabled.d) direction.add(dirX);
 
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
       if (isMoving){
         if(!using_only_room){
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
-          //console.log(RayCasterArray);
         }
         else {
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,only_room);
         }
-        //movingDirection=checkCollision(direction);
         player.position.add(movingDirection);
-        //translating ray with player
-        for (let x=0;x<RayCasterArray.length;x++){
-          RayCasterArray[x].ray.origin=player.position;
-          RayCasterArray[x].ray.origin.y=20;
-        }
+        RayCasterArray=player_func.updatePlayerRayPosition(player,RayCasterArray);
       }
-/*---------------------------CAMERA TRANSLATION---------------------------*/
-      //cameraTranslation
-      if (isRotating||isMoving){
-        //camera rotation
-        camera.quaternion.copy(player.quaternion);
-        //camera.quaternion.multiply(cameraVerticalRotation);
-        //computing new camera location
-        cameraPosition.applyQuaternion(player.quaternion);
-        camera.position.copy(player.position);
-        camera.position.add(cameraPosition);
+      /*---------------------------CAMERA MOVEMENT---------------------------*/
+      if(!using_only_room){
+        camera_func.checkCameraCollision (player,camera,enabled,full_room,RayCasterArray[2]);
       }
-/*---------------------------UPDATING RAY VISUALIZATION---------------------------*/
-      for (let x=0; x<linesArray.length;x++){
-        debug.updateRay(linesArray[x],player);
+      else {
+        camera_func.checkCameraCollision (player,camera,enabled,only_room,RayCasterArray[2]);
       }
 
-/*---------------------------INTERACTION OBJECTS---------------------------*/
+      /*---------------------------INTERACTION OBJECTS---------------------------*/
       if(!using_only_room){
         interaction.spinObjects(vaccines);
         countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
@@ -420,50 +358,14 @@ function update(){
         }
 
       break;
+    //VIRUS FIGHT
     case 2:
+      break;
+    case 3:
       break;
     default:
       console.log("ERROR");
   }
-}
-
-function checkCollision(direction){
-  let Collision_Distance = 17;
-  for (let x=0;x<collision.length;x++){
-    collision[x].isColliding=false;
-    collision[x].distance=Collision_Distance+10;
-  }
-  var collisionResults;
-  for (var rayIndex = 0; rayIndex < RayCasterArray.length; rayIndex++) {
-    if (using_only_room){
-      collisionResults = RayCasterArray[rayIndex].intersectObjects(only_room.children);
-    }
-    else{
-      collisionResults = RayCasterArray[rayIndex].intersectObjects(full_room.children);
-    }
-    if(collisionResults.length > 0) {
-      if(collisionResults[0].distance < Collision_Distance) {
-          var axesCollision = collisionResults[0].face.normal.clone();
-          collision[rayIndex].isColliding=true;
-          collision[rayIndex].normal=axesCollision;
-      }
-    collision[rayIndex].distance=collisionResults[0].distance;
-    }
-  }
-  var results=direction.clone();
-  var final_normal=new THREE.Vector3();
-  var normalArray = [];
-  for (let x=0;x<collision.length;x++){
-    if (collision[x].isColliding){
-      if(!normalArray.includes(collision[x].normal))
-        normalArray.push(collision[x].normal);
-    }
-  }
-  for (let x=0;x<normalArray.length;x++){
-    if(direction.clone().dot(normalArray[x])<0)
-      results=results.sub(normalArray[x].multiplyScalar(direction.clone().dot(normalArray[x])));
-  }
-  return results;
 }
 
 
