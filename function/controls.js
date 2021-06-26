@@ -65,9 +65,6 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
       break;
     case 'x':
       enabled[event.key]=true;
-      if(masks.length - countMasksAlive > 0){
-        countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
-      }
       break;
     case 'c':
       enabled[event.key]=true;

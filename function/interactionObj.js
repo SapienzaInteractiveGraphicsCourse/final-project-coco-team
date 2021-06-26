@@ -111,7 +111,6 @@ export function maskVirus(masks,countMasksAlive){
   var remain = masks.length - countMasksAlive - 1;
   document.getElementById("mask").innerHTML = "&#128567 x " + remain;
   return countMasksAlive+1;
-
 }
 
 export function checkNearVirus(virus,playerX,playerZ,ray){
@@ -137,8 +136,14 @@ export function checkNearVirus(virus,playerX,playerZ,ray){
 export function contactWithVirus(virus, remainingLive, playerX, playerZ){
   var inside = checkNearVirus(virus, playerX,playerZ,30);
   if(inside){
-      remainingLive -= 0.2; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
-      document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
+      remainingLive -= 0.05; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
+      document.getElementById("contact").innerHTML = "&#128156 " + Math.round(remainingLive) + "%";
   }
   return remainingLive;
+}
+
+export function gelVirus(gels,countGelsAlive){
+  var remain = gels.length - countGelsAlive - 1;
+  document.getElementById("gel").innerHTML = "&#129524 x " + remain;
+  return countGelsAlive+1;
 }

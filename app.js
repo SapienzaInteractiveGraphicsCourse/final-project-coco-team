@@ -55,6 +55,9 @@ var remainingLive = 100;
 
 var AnimationAction;
 
+var timerGel, time_remainingGel;
+var timerMask, time_remainingMask;
+
 loader();
 
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
@@ -206,7 +209,7 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          end_time=timer.setTimer(1,0);
+          end_time=timer.setTimer(0,50);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -274,7 +277,7 @@ function update(){
 
     //PUZZLE PART
     case 1:
-      time_remaining=timer.timerUpdate(end_time);
+      time_remaining=timer.timerUpdate(end_time,true);
 
       var isRotating,isMoving;
       /*---------------------------PLAYER ROTATION---------------------------*/
@@ -294,22 +297,53 @@ function update(){
       /*---------------------------PLAYER MOVEMENT---------------------------*/
       var dirZ = new THREE.Vector3(0,0,2);
       var dirX = new THREE.Vector3(2,0,0);
+      var direction_1 = new THREE.Vector3(0,0,1);
+      var direction_2 = new THREE.Vector3(1,0,0);
+      var rotation_direction = new THREE.Vector3(0,0,0);
 
-      if (enabled.c){
-        dirZ.multiplyScalar(2);
-        dirX.multiplyScalar(2);
+      if(using_only_room && enabled.x && (masks.length-countMasksAlive) > 0){
+        countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
+        timerMask=timer.setTimer(0,5);
       }
+      time_remainingMask=timer.timerUpdate(timerMask,false);
 
+      if (using_only_room && enabled.c && (gels.length-countGelsAlive) > 0){
+        dirZ = dirZ.multiplyScalar(6);
+        dirX = dirX.multiplyScalar(6);
+        countGelsAlive = interaction.gelVirus(gels,countGelsAlive);
+        timerGel=timer.setTimer(0,5);
+      }
+      time_remainingGel=timer.timerUpdate(timerGel,false);
+      if(time_remainingGel > 0){
+        dirZ = dirZ.multiplyScalar(6);
+        dirX = dirX.multiplyScalar(6);
+      }
       dirZ.applyQuaternion(player.quaternion);
       dirX.applyQuaternion(player.quaternion);
 
       var direction = new THREE.Vector3(0,0,0);
       var movingDirection;
 
-      if (enabled.w) direction.sub(dirZ);
-      if (enabled.a) direction.sub(dirX);
-      if (enabled.s) direction.add(dirZ);
-      if (enabled.d) direction.add(dirX);
+      // if (enabled.w) direction.sub(dirZ);
+      // if (enabled.a) direction.sub(dirX);
+      // if (enabled.s) direction.add(dirZ);
+      // if (enabled.d) direction.add(dirX);
+      if (enabled.w) {
+        direction.sub(dirZ);
+        rotation_direction.sub(direction_1);
+      }
+      if (enabled.a) {
+        direction.sub(dirX);
+        rotation_direction.sub(direction_2);
+      }
+      if (enabled.s) {
+        direction.add(dirZ);
+        rotation_direction.add(direction_1);
+      }
+      if (enabled.d) {
+        direction.add(dirX);
+        rotation_direction.add(direction_2);
+      }
 
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
@@ -346,11 +380,8 @@ function update(){
         interaction.spinObjects(gels);
         countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
       }
-      if(using_only_room){
-      //   if(/*STO IN UN INTORNO DEL VIRUS E NON VIENE NESSUN EVENTO LEGATO ALLA MASCHERINA*/){
-      //     remainingLive-=5;
-      //     document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
-      //   }
+
+      if(using_only_room && time_remainingMask <= 0){
         remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
       }
 
