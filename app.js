@@ -57,6 +57,8 @@ var AnimationAction;
 
 var timerGel, time_remainingGel;
 var timerMask, time_remainingMask;
+var activatedMask=false;
+var activatedGel=false;
 
 loader();
 
@@ -304,20 +306,28 @@ function update(){
       if(using_only_room && enabled.x && (masks.length-countMasksAlive) > 0){
         countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
         timerMask=timer.setTimer(0,5);
+        activatedMask = true;
       }
-      time_remainingMask=timer.timerUpdate(timerMask,false);
+      if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask,false);
 
       if (using_only_room && enabled.c && (gels.length-countGelsAlive) > 0){
         dirZ = dirZ.multiplyScalar(6);
         dirX = dirX.multiplyScalar(6);
         countGelsAlive = interaction.gelVirus(gels,countGelsAlive);
         timerGel=timer.setTimer(0,5);
+        activatedGel = true;
       }
-      time_remainingGel=timer.timerUpdate(timerGel,false);
-      if(time_remainingGel > 0){
-        dirZ = dirZ.multiplyScalar(6);
-        dirX = dirX.multiplyScalar(6);
+      if(activatedGel){
+        time_remainingGel=timer.timerUpdate(timerGel,false);
+        if(time_remainingGel > 0){
+          dirZ = dirZ.multiplyScalar(6);
+          dirX = dirX.multiplyScalar(6);
+        }
+        else{
+          activatedGel = false;
+        }
       }
+
       dirZ.applyQuaternion(player.quaternion);
       dirX.applyQuaternion(player.quaternion);
 
@@ -388,7 +398,8 @@ function update(){
         countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
       }
 
-      if(using_only_room && time_remainingMask <= 0){
+      if(using_only_room && (!activatedMask || time_remainingMask <= 0)){
+        activatedMask = false;
         remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
       }
 
