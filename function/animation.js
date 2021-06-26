@@ -5,46 +5,82 @@ export function walkingPlayer(player,mixer,clock){
   var values = [0,0,player.position.z, 0,0,player.position.z, 0,0,player.position.z];
   var posBody = new THREE.VectorKeyframeTrack('Body.position', times, values);*/
   var values;
-  var times = [0, 2, 4, 6];
-  var duration = 12;
+  var times;
+  var position;
+  var duration = 16;
   //var values = [0,0,player.position.z+2, 0,0,player.position.z-2, 0,0,player.position.z+2];
   //var posRightLeg = new THREE.VectorKeyframeTrack('UpperLeftLeg.position', times, values);
+  var angleArray=[-Math.PI,             //0
+                  -Math.PI*3/4,         //1
+                  -Math.PI/2*3,         //2
+                  -Math.PI/2,           //3
+                  -Math.PI/3,           //4
+                  -Math.PI/4,           //5
+                  0,                    //6
+                  Math.PI/4,            //7
+                  Math.PI/3,            //8
+                  Math.PI/2,            //9
+                  Math.PI*2/3,          //10
+                  Math.PI*3/4,          //11
+                  Math.PI];             //12
+  var qArray=[];
+  for (let x=0;x<angleArray.length;x++){
+    qArray.push(new THREE.Quaternion().setFromEuler(new THREE.Euler( angleArray[x], 0, 0, 'XYZ' )));
+  }
 
-  let rotationEuler = new THREE.Euler( Math.PI/10, 0, 0, 'XYZ' );
-  let r = new THREE.Quaternion().setFromEuler(rotationEuler);
-
-  let rotationEuler1 = new THREE.Euler( -Math.PI/20, 0, 0, 'XYZ' );
-  let r1 = new THREE.Quaternion().setFromEuler(rotationEuler1);
-
-  let rotationEuler2 = new THREE.Euler( 0, 0, 0, 'XYZ' );
-  let r2 = new THREE.Quaternion().setFromEuler(rotationEuler2);
-
-  let rotationEuler3 = new THREE.Euler(-Math.PI/10, 0, 0, 'XYZ' );
-  let r3 = new THREE.Quaternion().setFromEuler(rotationEuler3);
-
-  let rotationEuler4 = new THREE.Euler( Math.PI/20, 0, 0, 'XYZ' );
-  let r4 = new THREE.Quaternion().setFromEuler(rotationEuler4);
-
-  values = [0,0,player.position.z+2, 0,0,player.position.z-2, 0,0,player.position.z+2];
+  times = [0, 4, 8, 12, 16];
+  values = [player.children[0].position.x,player.children[0].position.y,player.children[0].position.z,
+            player.children[0].position.x,player.children[0].position.y+2,player.children[0].position.z,
+            player.children[0].position.x,player.children[0].position.y,player.children[0].position.z,
+            player.children[0].position.x,player.children[0].position.y-2,player.children[0].position.z,
+            player.children[0].position.x,player.children[0].position.y,player.children[0].position.z,];
   var posBody = new THREE.VectorKeyframeTrack('Body.position', times, values);
 
-  times = [0, 4, 6, 8, 12];
-  values = [  r.x,r.y,r.z,r.w, r2.x,r2.y,r2.z,r2.w, r1.x,r1.y,r1.z,r1.w, r2.x,r2.y,r2.z,r2.w, r.x,r.y,r.z,r.w,];
+  times = [0, 2, 4, 6, 8, 10, 12, 14, 16];
+  position=[6,6,7,9,8,7,6,5,6];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
   var rotationUpperLeft = new THREE.QuaternionKeyframeTrack( 'UpperLeftLeg.quaternion', times, values);
 
-  times = [0, 4, 6, 8, 12];
-  values = [  r3.x,r3.y,r3.z,r3.w, r2.x,r2.y,r2.z,r2.w, r4.x,r4.y,r4.z,r4.w, r2.x,r2.y,r2.z,r2.w, r3.x,r3.y,r3.z,r3.w];
+  times = [0, 2, 4, 6, 8, 10, 12, 14, 16];
+  position=[4,3,3,3,4,6,5,5,4];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
   var rotationLowerLeft = new THREE.QuaternionKeyframeTrack( 'LowerLeftLeg.quaternion', times, values);
 
-  times = [0, 2, 6, 10, 12];
-  values = [  r1.x,r1.y,r1.z,r1.w, r2.x,r2.y,r2.z,r2.w, r.x,r.y,r.z,r.w, r2.x,r2.y,r2.z,r2.w, r1.x,r1.y,r1.z,r1.w];
+  times = [0, 2, 4, 6, 8, 10, 12, 14, 16];
+  position=[8,7,6,5,6,6,6,7,9];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
   var rotationUpperRight = new THREE.QuaternionKeyframeTrack( 'UpperRightLeg.quaternion',times,values);
 
-  times = [0, 2, 6, 10, 12];
-  values = [  r4.x,r4.y,r4.z,r4.w, r2.x,r2.y,r2.z,r2.w, r3.x,r3.y,r3.z,r3.w, r2.x,r2.y,r2.z,r2.w, r4.x,r4.y,r4.z,r4.w ];
+  times = [0, 2, 4, 6, 8, 10, 12, 14, 16];
+  position=[4,6,5,5,4,4,3,3,3];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
   var rotationLowerRight = new THREE.QuaternionKeyframeTrack( 'LowerRightLeg.quaternion',times,values);
 
-  var clip = new THREE.AnimationClip("walk", duration, [rotationUpperLeft, rotationUpperRight, rotationLowerLeft, rotationLowerRight]);
+  var clip = new THREE.AnimationClip("walk", duration, [posBody, rotationUpperLeft, rotationUpperRight, rotationLowerLeft, rotationLowerRight]);
   mixer = new THREE.AnimationMixer(player);
 
   var AnimationAction = mixer.clipAction(clip);

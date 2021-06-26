@@ -354,8 +354,7 @@ function update(){
         direction.add(dirX);
         rotation_direction.add(direction_2);
       }
-
-      if (enabled.r==0){
+      if (enabled.r==1){
         player_func.updatePlayerRunningRotation(rotation_direction,player);
       }
       else{
