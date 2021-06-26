@@ -53,6 +53,8 @@ var end_time,time_remaining;
 var mixer,clock;
 var remainingLive = 100;
 
+var AnimationAction;
+
 loader();
 
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
@@ -120,12 +122,12 @@ function init() {
 
   noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
 
-  countMasksAlive = 20;
+  countMasksAlive = 10;
   temp = interaction.spreadingObj(countMasksAlive, maskMesh, noPlayingField, scene);
   masks = temp[0];
   noPlayingField = temp[1];
 
-  countGelsAlive = 20;
+  countGelsAlive = 10;
   temp = interaction.spreadingObj(countGelsAlive, gelMesh, noPlayingField, scene);
   gels = temp[0];
   noPlayingField = temp[1];
@@ -145,15 +147,15 @@ function init() {
   virus = temp[0];
   noPlayingField = temp[1];*/
 
-  countVaccinesAlive = 20;
+  countVaccinesAlive = 40;
   temp  = interaction.spreadingObj(countVaccinesAlive, vaccineMesh, noPlayingField, scene);
   vaccines = temp[0];
   noPlayingField = temp[1];
 
-  //console.log(player);
   var t = animation.walkingPlayer(player,mixer,clock);
   mixer = t[0];
   clock = t[1];
+  AnimationAction = t[2];
 
 /*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
@@ -234,6 +236,10 @@ function render(){
       break;
     case 2:
       renderer.render( scene, camera );
+      mixer.update(clock.getDelta());
+      break;
+    case 3:
+      renderer.render( scene, camera );
       break;
     default:
       console.log("error you should not be here");
@@ -289,6 +295,11 @@ function update(){
       var dirZ = new THREE.Vector3(0,0,2);
       var dirX = new THREE.Vector3(2,0,0);
 
+      if (enabled.c){
+        dirZ.multiplyScalar(2);
+        dirX.multiplyScalar(2);
+      }
+
       dirZ.applyQuaternion(player.quaternion);
       dirX.applyQuaternion(player.quaternion);
 
@@ -303,6 +314,7 @@ function update(){
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
       if (isMoving){
+        AnimationAction.play();
         if(!using_only_room){
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
         }
@@ -311,6 +323,9 @@ function update(){
         }
         player.position.add(movingDirection);
         RayCasterArray=player_func.updatePlayerRayPosition(player,RayCasterArray);
+      }
+      if (!isMoving){
+        AnimationAction.stop();
       }
       /*---------------------------CAMERA MOVEMENT---------------------------*/
       if(!using_only_room){
@@ -347,7 +362,7 @@ function update(){
           interaction.disappearObject(gels);
 
           noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
-          countVirusAlive = 20;
+          countVirusAlive = 10;
           var temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
           virus = temp[0];
           noPlayingField = temp[1];

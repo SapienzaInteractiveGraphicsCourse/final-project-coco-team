@@ -137,7 +137,7 @@ export function checkNearVirus(virus,playerX,playerZ,ray){
 export function contactWithVirus(virus, remainingLive, playerX, playerZ){
   var inside = checkNearVirus(virus, playerX,playerZ,30);
   if(inside){
-      remainingLive -= 5; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
+      remainingLive -= 0.2; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
       document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
   }
   return remainingLive;
