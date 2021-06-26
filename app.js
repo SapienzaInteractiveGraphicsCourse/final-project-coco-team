@@ -345,6 +345,8 @@ function update(){
         rotation_direction.add(direction_2);
       }
 
+      player_func.updatePlayerRunningRotation(rotation_direction,player);
+
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
       if (isMoving){

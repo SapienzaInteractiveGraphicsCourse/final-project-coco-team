@@ -45,6 +45,7 @@ export function updatePlayerRayPosition(player,RayCasterArray){
   }
   return RayCasterArray;
 }
+
 export function updatePlayerRayRotation(rotation,RayCasterArray){
   for (let x=0;x<RayCasterArray.length;x++){
     let rotationEuler = new THREE.Euler( 0, rotation, 0, 'XYZ' );
@@ -53,4 +54,35 @@ export function updatePlayerRayRotation(rotation,RayCasterArray){
     RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
   }
   return RayCasterArray;
+}
+
+export function updatePlayerRunningRotation(direction,player){
+  if (direction.equals(new THREE.Vector3(1,0,0))){
+    player.children[0].rotation.y=-Math.PI/2;
+  }
+  if (direction.equals(new THREE.Vector3(1,0,1))){
+    player.children[0].rotation.y=-Math.PI*3/4;
+  }
+  if (direction.equals(new THREE.Vector3(1,0,-1))){
+    player.children[0].rotation.y=-Math.PI/4;
+  }
+  if (direction.equals(new THREE.Vector3(0,0,1))){
+    player.children[0].rotation.y=Math.PI;
+  }
+  if (direction.equals(new THREE.Vector3(0,0,-1))){
+    player.children[0].rotation.y=0;
+  }
+  if (direction.equals(new THREE.Vector3(-1,0,1))){
+    player.children[0].rotation.y=Math.PI*3/4;
+  }
+  if (direction.equals(new THREE.Vector3(-1,0,0))){
+    player.children[0].rotation.y=Math.PI/2;
+  }
+  if (direction.equals(new THREE.Vector3(-1,0,-1))){
+    player.children[0].rotation.y=Math.PI/4;
+  }
+  if (direction.equals(new THREE.Vector3(0,0,0))){
+    player.children[0].rotation.y=0;
+  }
+  
 }
