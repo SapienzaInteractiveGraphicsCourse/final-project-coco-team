@@ -353,7 +353,7 @@ function update(){
       if (isMoving){
         if(!using_only_room){
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
-          console.log(RayCasterArray);
+          //console.log(RayCasterArray);
         }
         else {
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,only_room);
@@ -393,12 +393,13 @@ function update(){
         interaction.spinObjects(gels);
         countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
       }
-      // if(using_only_room){
+      if(using_only_room){
       //   if(/*STO IN UN INTORNO DEL VIRUS E NON VIENE NESSUN EVENTO LEGATO ALLA MASCHERINA*/){
       //     remainingLive-=5;
       //     document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
       //   }
-      // }
+        remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
+      }
 
       if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!" && !using_only_room){
           scene.add(only_room);

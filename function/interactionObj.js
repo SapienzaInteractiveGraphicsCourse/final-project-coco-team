@@ -108,17 +108,30 @@ export function vaccineVirus(nAliveObj, objectsArray){
 }
 
 export function maskVirus(masks,countMasksAlive){
-  //console.log(countMasksAlive);
   var remain = masks.length - countMasksAlive - 1;
   document.getElementById("mask").innerHTML = "&#128567 x " + remain;
-  //countMasksAlive++;
-  //console.log(countMasksAlive);
   return countMasksAlive+1;
 
 }
 
-// export function contactWithVirus(remainingTime){
-//   var remainingObj = objectsArray.length - nAliveObj - 1;
-//   if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('contact').innerHTML = "&#128156 " + remainingLive + "%";
-//   return nAliveObj+1;
-// }
+export function contactWithVirus(virus, remainingLive, playerX, playerZ){
+  var inside = false;
+  for(var i = 0; i<virus.length && !inside; i++){
+    if(virus[i].visible == true){
+      var x_in = (virus[i].position.x-60) <= playerX && playerX <= (virus[i].position.x+60);
+      var z_in = (virus[i].position.z-60) <= playerZ && playerZ <= (virus[i].position.z+60);
+      if(x_in && z_in){
+          remainingLive -= 5;//sono vicino al virus: o scappo, o lo uccido, o perdo vito
+          document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
+          inside = true;
+      }
+    }
+  }
+  return remainingLive;
+}
+
+
+  // var remainingObj = objectsArray.length - nAliveObj - 1;
+  // if(objectsArray[0].userData.tag == 'vaccine') document.getElementById('contact').innerHTML = "&#128156 " + remainingLive + "%";
+  // return nAliveObj+1;
+//}
