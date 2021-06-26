@@ -27,7 +27,7 @@ export function spreadingObj(nObject, objectMesh, noPlayingField, scene){
     }
     if(values_ok){  //vuol dire che è fuori a tutti gli ostacoli
       objectsArray[i].position.set(x,55,z); //accetto questi valori e inserisco una siringa li
-      objectsArray[i].rotation.set(Math.PI/6,0,Math.PI/6);
+      //objectsArray[i].rotation.set(Math.PI/6,0,Math.PI/6);
       i++; //passo alla siringa successiva
     }
     else{
