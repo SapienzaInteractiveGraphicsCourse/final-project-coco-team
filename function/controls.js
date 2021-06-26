@@ -52,9 +52,11 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
       break;
     case 'z':
       enabled[event.key]=true;
-      if(vaccines.length - countVaccinesAlive > 0){ //va fatto il check se si è in un intorno del virus
-        countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive);
-        countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
+      if(interaction.checkNearVirus(virus,playerX,playerZ,30)){
+        if(vaccines.length - countVaccinesAlive > 0){
+          countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive);
+          countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
+        }
       }
       break;
     case 'x':
