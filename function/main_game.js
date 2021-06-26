@@ -6,7 +6,7 @@ export function init(roomTexture,playerMesh){
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x800000);
 
-  scene.fog=new THREE.Fog(0x800000,60,1000);
+  //scene.fog=new THREE.Fog(0x800000,60,1000);
 
   const light_global = new THREE.PointLight( 0xffffff, 4, 1500 );
   light_global.position.set(0, 1000, 0);

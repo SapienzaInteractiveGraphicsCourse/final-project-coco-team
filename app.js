@@ -7,6 +7,7 @@ import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
 import * as controls from "./function/controls.js";
 import * as animation from "./function/animation.js";
+import * as animationVirus from "./function/animationVirus.js";
 import * as player_func from "./function/player.js";
 import * as camera_func from "./function/camera.js";
 
@@ -59,6 +60,10 @@ var timerGel, time_remainingGel;
 var timerMask, time_remainingMask;
 var activatedMask=false;
 var activatedGel=false;
+
+var mixerVirus,clockVirus;
+var AnimationActionVirus;
+var foundVirus=false;
 
 loader();
 
@@ -162,6 +167,8 @@ function init() {
   clock = t[1];
   AnimationAction = t[2];
 
+
+
 /*---------------------------MENU RAYCASTER---------------------------*/
   raycaster=new THREE.Raycaster();
 
@@ -211,7 +218,7 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          end_time=timer.setTimer(0,50);
+          end_time=timer.setTimer(1,0);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -238,10 +245,12 @@ function render(){
     case 1:
       renderer.render( scene, camera );
       mixer.update(clock.getDelta());
+      if(foundVirus) mixerVirus.update(clockVirus.getDelta());
       break;
     case 2:
       renderer.render( scene, camera );
       mixer.update(clock.getDelta());
+      if(foundVirus) mixerVirus.update(clockVirus.getDelta());
       break;
     case 3:
       renderer.render( scene, camera );
@@ -363,6 +372,12 @@ function update(){
 
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
+      if(foundVirus && !activatedGel) AnimationActionVirus.play();
+      if(foundVirus && activatedGel){
+         AnimationActionVirus.stop();
+         foundVirus = false;
+      }
+
       if (isMoving){
         AnimationAction.play();
         if(!using_only_room){
@@ -388,13 +403,25 @@ function update(){
       /*---------------------------INTERACTION OBJECTS---------------------------*/
       if(!using_only_room){
         interaction.spinObjects(vaccines);
-        countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive);
+        countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive, 20);
 
         interaction.spinObjects(masks);
-        countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive);
+        countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive, 20);
 
         interaction.spinObjects(gels);
-        countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive);
+        countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive, 20);
+      }
+
+      if(using_only_room){
+        var idx = animationVirus.nearestVirus(player.position.x, player.position.z, virus);
+        if(idx != virus.length+1){
+          var t = animationVirus.chasePlayer(player,virus[idx],mixerVirus,clockVirus);
+          mixerVirus = t[0];
+          clockVirus = t[1];
+          AnimationActionVirus = t[2];
+          foundVirus = true;
+        }
+
       }
 
       if(using_only_room && (!activatedMask || time_remainingMask <= 0)){
@@ -414,6 +441,7 @@ function update(){
           var temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
           virus = temp[0];
           noPlayingField = temp[1];
+
 
           using_only_room = true;
 

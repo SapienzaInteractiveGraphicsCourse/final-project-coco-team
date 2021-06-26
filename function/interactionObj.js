@@ -65,8 +65,8 @@ export function removePlayerPosition(player, noPlayingField){
   return noPlayingField;
 }
 
-export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObjects){
-  var maxDistance = 20;
+export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObjects, d){
+  var maxDistance = d;
   for(var i = 0; i<objectsArray.length; i++){
     if(objectsArray[i].visible == true){
       var distance = (playerX-objectsArray[i].position.x)**2 + (playerZ-objectsArray[i].position.z)**2; //I compute the distance squared because it is slightly more efficient to calculate.
@@ -107,6 +107,20 @@ export function vaccineVirus(nAliveObj, objectsArray){
   return nAliveObj+1;
 }
 
+
+/*export function vaccineVirus(playerX,playerZ,virus){
+  var maxDistance = 70;
+
+  for(var i = 0; i<virus.length; i++){
+    if(objectsArray[i].visible == true){
+      var distance = (playerX-virus[i].position.x)**2 + (playerZ-virus[i].position.z)**2);
+      if(distance < maxDistance*maxDistance){
+
+      }
+    }
+  }
+}*/
+
 export function maskVirus(masks,countMasksAlive){
   var remain = masks.length - countMasksAlive - 1;
   document.getElementById("mask").innerHTML = "&#128567 x " + remain;
@@ -134,7 +148,7 @@ export function checkNearVirus(virus,playerX,playerZ,ray){
 
 
 export function contactWithVirus(virus, remainingLive, playerX, playerZ){
-  var inside = checkNearVirus(virus, playerX,playerZ,30);
+  var inside = checkNearVirus(virus, playerX,playerZ,70);
   if(inside){
       remainingLive -= 0.05; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
       document.getElementById("contact").innerHTML = "&#128156 " + Math.round(remainingLive) + "%";
