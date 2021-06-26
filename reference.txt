@@ -1,9 +1,5 @@
-#Animazione morte virus
-https://github.com/mrdoob/three.js/blob/master/examples/webgl_points_dynamic.html
-
-
 ---TODOLIST
 Path finding virus semplice
-Animazioni player
+Animazione braccia (pressione z,accoltellamento,deve essere carina anche dal cambio di visuale)
 Comandi menu(opzioni/tutorial)
-Tasti e effetti oggetti
+Musica(Battito cardiaco)
