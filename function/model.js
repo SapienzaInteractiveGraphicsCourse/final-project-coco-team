@@ -61,9 +61,8 @@ export function getPlayerMesh () {
     gltfLoader.load('./resources/models/Player.gltf',
     function ( gltf ) {
       let scale=1.5;
-      const playerMesh = gltf.scene.children.find((child) => child.name === "Body");
+      const playerMesh = gltf.scene;
       playerMesh.scale.set(playerMesh.scale.x * scale, playerMesh.scale.y * scale, playerMesh.scale.z * scale);
-      playerMesh.position.y += 15*scale;
       resolve(playerMesh);
     },
     function ( xhr ) {

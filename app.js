@@ -6,8 +6,9 @@ import * as room from "./function/room.js";
 import * as debug from "./function/debug.js";
 import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
-import * as controls from "./function/controls.js"
-import * as animation from "./function/animation.js"
+import * as controls from "./function/controls.js";
+import * as animation from "./function/animation.js";
+import * as player_func from "./function/player.js"
 
 //resource that has to be loaded
 var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
@@ -123,7 +124,7 @@ function init() {
   noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
 
   countMasksAlive = 20;
-  var temp = interaction.spreadingObj(countMasksAlive, maskMesh, noPlayingField, scene);
+  temp = interaction.spreadingObj(countMasksAlive, maskMesh, noPlayingField, scene);
   masks = temp[0];
   noPlayingField = temp[1];
 
@@ -162,7 +163,7 @@ function init() {
 
 /*---------------------------PLAYER RAYCASTER---------------------------*/
   RayCasterArray = [];
-  let rayNumbers = 8
+  let rayNumbers = 8;
   for (let x=0;x<rayNumbers;x++){
     let angle= -x*(Math.PI*2/rayNumbers);
     let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
@@ -296,7 +297,7 @@ function update(){
 
       var oldCameraPosition = new THREE.Vector3().copy(cameraTranslation);
       //var cameraPosition = checkCameraCollision(oldCameraPosition);
-      var cameraPosition = oldCameraPosition
+      var cameraPosition = oldCameraPosition;
       var camera_Incline = new THREE.Euler( -Math.atan((cameraTranslation.y-40)/camera.position.z), 0, 0, 'XYZ' );
       var cameraVerticalRotation = new THREE.Quaternion().setFromEuler(camera_Incline);
 
@@ -350,7 +351,13 @@ function update(){
       isMoving=!direction.equals(new THREE.Vector3(0,0,0));
 
       if (isMoving){
-        movingDirection=checkCollision(direction);
+        if(!using_only_room){
+          movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
+        }
+        else {
+          movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,only_room);
+        }
+        //movingDirection=checkCollision(direction);
         player.position.add(movingDirection);
         //translating ray with player
         for (let x=0;x<RayCasterArray.length;x++){
@@ -455,6 +462,8 @@ function checkCollision(direction){
   }
   return results;
 }
+
+
 function checkCameraCollision(cameraPosition){
   let Collision_Distance = cameraPosition.z;
   var collisionResultsObstacles;

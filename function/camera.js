@@ -1,66 +1,40 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 
-export function updatePlayerPosition(player,enabled){
-  
+const cameradisplacement = [new THREE.Vector3(0,0,0),new THREE.Vector3(0,20,50),new THREE.Vector3(0,20,-50)];
+
+export function cameraUpdatePosition(player,camera,enabled){
+  cameraPromisedDisplacement=cameradisplacement[enabled.r];
+  if (isRotating||isMoving){
+    cameraPosition.applyQuaternion(player.quaternion);
+    camera.position.copy(player.position);
+    camera.position.add(cameraPosition);
+  }
 }
 
-export function updatePlayerRotation(){
-  
+export function cameraUpdateRotation(player,camera){
+  camera.quaternion.copy(player.quaternion);
 }
 
-export function checkPlayerCollision(direction,raycasterArray,room){
-  var Collision_Distance = 17;
-
-  var normalArray=[];
-  var collisionResults;
-  for (let rayIndex = 0; rayIndex < raycasterArray.length; rayIndex++) {
-    collisionResults = raycasterArray[rayIndex].intersectObjects(room.children);
-    if(collisionResults.length > 0) {
-      if(collisionResults[0].distance < Collision_Distance) {
-        if(!normalArray.includes(collisionResults[0].face.normal))
-          normalArray.push(collisionResults[0].face.normal.clone());
+export function checkCameraCollision (player,camera,enabled,room,raycast) {
+    let Collision_Distance = cameraPosition.z;
+    var collisionResultsObstacles = raycast.intersectObjects(room.children);
+    if(collisionResultsObstacles.length > 0) {
+      if(collisionResultsObstacles[0].distance < Collision_Distance) {
+        let newCameraPositionObstacles = new THREE.Vector3().copy(cameraPosition);
+        newCameraPositionObstacles.z=collisionResultsObstacles[0].distance-1;
+        return newCameraPositionObstacles;
+      }
+      else{
+        return cameraPosition;
       }
     }
-  }
-  var results=direction.clone();
-  var final_normal=new THREE.Vector3();
-  console.log(normalArray);
-  for (let x=0;x<normalArray.length;x++){
-    if(direction.clone().dot(normalArray[x])<0)
-      results=results.sub(normalArray[x].multiplyScalar(direction.clone().dot(normalArray[x])));
-  }
-  return results;
+}
+export function initCameraRay(){
+  
 }
 
-export function initPlayerRay(){
-  var RayCasterArray=[];
-  let rayNumbers = 8;
-  for (let x=0;x<rayNumbers;x++){
-    let angle= -x*(Math.PI*2/rayNumbers);
-    let rotationEuler = new THREE.Euler( 0, angle, 0, 'XYZ' );
-    let rotationQuaternion = new THREE.Quaternion();
-    rotationQuaternion.setFromEuler(rotationEuler);
-    let RayDirection = new THREE.Vector3( 1, 0, 0 );
-    RayDirection.applyQuaternion(rotationQuaternion);
-    var RayCasterElement = new THREE.Raycaster(new THREE.Vector3( 0, 20, 0 ),RayDirection);
-    RayCasterArray.push(RayCasterElement);
-  }
-  return RayCasterArray;
-}
-export function updatePlayerRayPosition(player,RayCasterArray){
-  for (let x=0;x<RayCasterArray.length;x++){
-    RayCasterArray[x].ray.origin=player.position;
-  }
-  return RayCasterArray;
-}
-export function updatePlayerRayRotation(rotation,RayCasterArray){
-  for (let x=0;x<RayCasterArray.length;x++){
-    let rotationEuler = new THREE.Euler( 0, rotation, 0, 'XYZ' );
-    let rotationQuaternion = new THREE.Quaternion();
-    rotationQuaternion.setFromEuler(rotationEuler);
-    RayCasterArray[x].ray.direction.applyQuaternion(rotationQuaternion);
-  }
-  return RayCasterArray
+export function updateCameraRayRotation(){
+  
 }
 /*
 
@@ -123,7 +97,9 @@ export function updatePlayerRayRotation(rotation,RayCasterArray){
         movingDirection=checkCollision(direction);
         player.position.add(movingDirection);
         //translating ray with player
-        
+        for (let x=0;x<RayCasterArray.length;x++){
+          RayCasterArray[x].ray.origin=player.position;
+        }
       }
 /*---------------------------CAMERA TRANSLATION---------------------------
       //cameraTranslation
