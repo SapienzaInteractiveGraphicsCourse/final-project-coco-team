@@ -353,6 +353,7 @@ function update(){
       if (isMoving){
         if(!using_only_room){
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
+          console.log(RayCasterArray);
         }
         else {
           movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,only_room);
@@ -362,6 +363,7 @@ function update(){
         //translating ray with player
         for (let x=0;x<RayCasterArray.length;x++){
           RayCasterArray[x].ray.origin=player.position;
+          RayCasterArray[x].ray.origin.y=20;
         }
       }
 /*---------------------------CAMERA TRANSLATION---------------------------*/
