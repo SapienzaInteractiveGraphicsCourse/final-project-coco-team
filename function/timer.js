@@ -13,11 +13,11 @@ export function timerUpdate(countDownDate){
   return distance;
 }
 
-export function generalTimerHTMLUpdater(distance,showTimer){
+export function generalTimerHTMLUpdater(distance){
   // Time calculations for minutes and seconds
   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  if(showTimer) document.getElementById("timer").innerHTML = "Remaining time: <br /><br />" + minutes + "m " + seconds + "s ";
+  document.getElementById("timer").innerHTML = "Remaining time: <br /><br />" + minutes + "m " + seconds + "s ";
 }
 
 export function generalTimerChange(){

@@ -136,7 +136,7 @@ export function stabVirus(player, mixer, clock){
 
   var AnimationAction = mixer.clipAction(clip);
   //AnimationAction.clampWhenFinished=true;
-  AnimationAction.loop = THREE.LoopOnce
+  AnimationAction.loop = THREE.LoopOnce;
   AnimationAction.timeScale = duration;
 
   clock = new THREE.Clock();

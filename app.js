@@ -7,7 +7,7 @@ import * as timer from "./function/timer.js";
 import * as interaction from "./function/interactionObj.js";
 import * as controls from "./function/controls.js";
 import * as animation from "./function/animation.js";
-import * as animationVirus from "./function/animationVirus.js";
+import * as virus_func from "./function/virus.js";
 import * as player_func from "./function/player.js";
 import * as camera_func from "./function/camera.js";
 
@@ -60,15 +60,12 @@ var timerMask, time_remainingMask;
 var activatedMask=false;
 var activatedGel=false;
 
-var mixerVirus,clockVirus;
-var AnimationActionVirus;
-var foundVirus=false;
-
 var AmbientSound;
 
 var mixerStab,clockStab;
 var AnimationActionStab;
 
+var onGameLoad;
 
 loader();
 
@@ -224,13 +221,16 @@ function onMouseClick( event ) {
     case 0:
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
-           enabled.stato=1;
-          end_time=timer.setTimer(1,0);
-          AmbientSound.play();
-          timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time), false);
+          enabled.stato=1;
+          onGameLoad=true;
         }
-        if (INTERSECTED.uuid == ButtonArrayId[1])
-          console.log("Option");
+        if (INTERSECTED.uuid == ButtonArrayId[1]){
+          const blocker = document.getElementById( 'blocker' );
+          const instructions = document.getElementById( 'instructions' );
+          blocker.style.display = 'block';
+          instructions.style.display = '';
+          enabled.stato = 4;
+        }
       }
       break;
   }
@@ -254,19 +254,15 @@ function render(){
     case 1:
       renderer.render( scene, camera );
       mixer.update(clock.getDelta());
-      if(foundVirus) mixerVirus.update(clockVirus.getDelta());
       break;
     case 2:
       renderer.render( scene, camera );
       mixer.update(clock.getDelta());
-      if(foundVirus) mixerVirus.update(clockVirus.getDelta());
       mixerStab.update(clockStab.getDelta());
       break;
     case 3:
       renderer.render( scene, camera );
       break;
-    default:
-      console.log("error you should not be here");
   }
 }
 
@@ -298,9 +294,15 @@ function update(){
 
     //PUZZLE PART
     case 1:
+      //ON LOAD WHAT HAPPENS
+      if (onGameLoad){
+        end_time=timer.setTimer(0,10);
+        AmbientSound.play();
+        onGameLoad=false;
+      }
 
       general_time=timer.timerUpdate(end_time);
-      timer.generalTimerHTMLUpdater(general_time, true);
+      timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time));
 
       //Get player movement
       var direction = player_func.getPlayerMovement(player,camera,enabled,RayCasterArray,full_room);
@@ -377,20 +379,15 @@ function update(){
       //if(!enabled.z) AnimationActionStab.stop();
 
       /*---------------------------VIRUS LOGIC---------------------------*/
-      var idx = animationVirus.nearestVirus(player.position.x, player.position.z, virus);
-      if(idx != virus.length+1){
-        var t = animationVirus.chasePlayer(player,virus[idx],mixerVirus,clockVirus);
-        mixerVirus = t[0];
-        clockVirus = t[1];
-        AnimationActionVirus = t[2];
-        foundVirus = true;
-      }
+      virus_func.detectionVirus(player, virus);
+      virus_func.chasePlayer(player,virus);
 
-      if(foundVirus && !activatedGel) AnimationActionVirus.play();
-      if(foundVirus && activatedGel){
-         AnimationActionVirus.stop();
-         foundVirus = false;
-      }
+      //FIX THIS
+      // if(foundVirus && !activatedGel) AnimationActionVirus.play();
+      // if(foundVirus && activatedGel){
+      //    AnimationActionVirus.stop();
+      //    foundVirus = false;
+      // }
 
       /*---------------------------MASK LOGIC---------------------------*/
       if(enabled.x && (masks.length-countMasksAlive) > 0){
@@ -400,6 +397,11 @@ function update(){
       }
 
       if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask);
+
+      if(!activatedMask || time_remainingMask <= 0){
+        activatedMask = false;
+        remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
+      }
 
       /*---------------------------GEL LOGIC---------------------------*/
       if (enabled.c && (gels.length-countGelsAlive) > 0){
@@ -418,16 +420,6 @@ function update(){
         }
       }
 
-      if(!activatedMask || time_remainingMask <= 0){
-        activatedMask = false;
-        remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
-      }
-
       break;
-    //PAUSE NOTHING HAPPENS HERE
-    case 3:
-      break;
-    default:
-      console.log("ERROR");
   }
 }

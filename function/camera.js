@@ -4,13 +4,10 @@ const cameradisplacement = [new THREE.Vector3(0,20,0),new THREE.Vector3(0,20,50)
 const camera_pointy = new THREE.Vector3(0,50,0);
 
 export function checkCameraCollision (player,camera,enabled,room,raycast) {
-  player.children[0].visible=false;
   //rotate to player direction
   if (enabled.r==0) {
-    player.children[0].visible=false;
-    player.children[0].children[0].visible=false;
-    player.children[0].children[3].visible=false;
-    player.children[0].children[4].visible=false;
+    player.children[0].material.visible=false;
+    player.children[0].children[0].material.visible=false;
     camera.quaternion.copy(player.quaternion);
     camera.position.copy(player.position);
     camera.position.add(cameradisplacement[enabled.r]);
@@ -20,10 +17,8 @@ export function checkCameraCollision (player,camera,enabled,room,raycast) {
     camera.quaternion.multiply(cameraVerticalRotation);
   }
   else{
-    player.children[0].visible=true;
-    player.children[0].children[0].visible=true;
-    player.children[0].children[3].visible=true;
-    player.children[0].children[4].visible=true;
+    player.children[0].material.visible=true;
+    player.children[0].children[0].material.visible=true;
     camera.quaternion.copy(player.quaternion);
     //check the distance
     let Collision_Distance = 50;

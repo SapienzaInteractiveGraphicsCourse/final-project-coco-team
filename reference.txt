@@ -1,5 +1,5 @@
 ---TODOLIST
-Path finding virus semplice(usare un movimento normale, animazione tentacoli)
-Animazione braccia (pressione z,accoltellamento,deve essere carina anche dal cambio di visuale)
-Siringa sulla mano(implementazione sul modello e poi le disattivi una volta entrato, entrambi nella stessa posizione)?
-Comandi menu(opzioni/tutorial, menu di pausa, schermata di vittoria HTML)
+Animazione virus se detectato player
+Animazione braccia movimento
+Comandi menu(menu di pausa, schermata di vittoria HTML)
+Fixing interaction menu;
