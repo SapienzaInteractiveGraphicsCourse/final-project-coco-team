@@ -62,7 +62,7 @@ export function keypressedAgent(event,enabled,end_time,time_remaining,virus,play
       enabled[event.key]=true;
       if(vaccines.length - countVaccinesAlive > 0){
         //console.log("sono qui");
-        countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive,70);
+        countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive, 70);
         countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
       }
       break;

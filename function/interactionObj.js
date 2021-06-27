@@ -68,8 +68,8 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
         objectsArray[i].visible = false;
         aliveObjects = aliveObjects-1;
         var caughtObjects = objectsArray.length-aliveObjects;
-        if(objectsArray[0].userData.tag == 'syringeEmpty') document.getElementById('syringeEmpty').innerHTML = " EMPTY &#128137 x " + caughtObjects;
-        if(objectsArray[0].userData.tag == 'syringeFull') document.getElementById('syringeFull').innerHTML = "FULL &#128137 x " + caughtObjects;
+        // if(objectsArray[0].userData.tag == 'syringeEmpty') document.getElementById('syringeEmpty').innerHTML = " EMPTY &#128137 x " + caughtObjects;
+        // if(objectsArray[0].userData.tag == 'syringeFull') document.getElementById('syringeFull').innerHTML = "FULL &#128137 x " + caughtObjects;
         if(objectsArray[0].userData.tag == 'virus') document.getElementById('virus').innerHTML = "&#129440 x " + caughtObjects;
         if(objectsArray[0].userData.tag == 'gel') document.getElementById('gel').innerHTML = "&#129524 x " + caughtObjects;
         if(objectsArray[0].userData.tag == 'mask') document.getElementById('mask').innerHTML = "&#128567 x " + caughtObjects;
@@ -133,7 +133,7 @@ export function checkNearVirus(virus,playerX,playerZ,ray){
 
 
 export function contactWithVirus(virus, remainingLive, playerX, playerZ){
-  var inside = checkNearVirus(virus, playerX,playerZ,70);
+  var inside = checkNearVirus(virus, playerX, playerZ, 50);
   if(inside){
       remainingLive -= 0.05; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
       document.getElementById("contact").innerHTML = "&#128156 " + Math.round(remainingLive) + "%";

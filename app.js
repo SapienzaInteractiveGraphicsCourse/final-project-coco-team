@@ -217,7 +217,7 @@ function onMouseClick( event ) {
            enabled.stato=1;
           end_time=timer.setTimer(1,0);
           AmbientSound.play();
-          timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time));
+          timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time), false);
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -289,7 +289,7 @@ function update(){
     case 1:
 
       general_time=timer.timerUpdate(end_time);
-      timer.generalTimerHTMLUpdater(general_time);
+      timer.generalTimerHTMLUpdater(general_time, true);
 
       //Get player movement
       var direction = player_func.getPlayerMovement(player,camera,enabled,RayCasterArray,full_room);
@@ -411,4 +411,3 @@ function update(){
       console.log("ERROR");
   }
 }
-
