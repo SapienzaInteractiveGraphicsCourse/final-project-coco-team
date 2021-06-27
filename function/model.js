@@ -1,7 +1,5 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import {GLTFLoader} from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
-import {OBJLoader} from 'https://threejs.org/examples/jsm/loaders/OBJLoader.js';
-import {MTLLoader} from 'https://threejs.org/examples/jsm/loaders/MTLLoader.js';
 
 export function getTexture (){
   const myPromise = new Promise((resolve, reject) => {
