@@ -310,7 +310,7 @@ function update(){
       if (onGameLoad){
         document.getElementById( 'blocker' ).style.display = 'none';
         document.getElementById( 'loading' ).style.display = 'none';
-        end_time=timer.setTimer(0,10);
+        end_time=timer.setTimer(1,30);
         AmbientSound.play();
         onGameLoad=false;
       }
