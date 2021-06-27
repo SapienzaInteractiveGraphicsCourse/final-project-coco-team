@@ -50,20 +50,21 @@ var countVaccinesAlive;
 
 var general_time,end_time;
 
-var mixer,clock;
+
 var remainingLive = 100;
 
-var AnimationAction;
-
-var timerGel, time_remainingGel;
-var timerMask, time_remainingMask;
+var timerGel;
+var timerMask;
 var activatedMask=false;
 var activatedGel=false;
 
+var isStabbing=false;
+
 var AmbientSound;
 
-var mixerStab,clockStab;
-var AnimationActionStab;
+var mixerLeg,clockLeg,AnimationActionLeg;
+var mixerArm,clockArm,AnimationActionArm;
+var mixerStab,clockStab,AnimationActionStab;
 
 var onGameLoad;
 
@@ -124,7 +125,7 @@ function init() {
   maskMesh.userData.tag = 'mask';
   gelMesh.userData.tag = 'gel';
 
-  temp = main_game.init(roomTexture,playerMesh,syringeFullMesh);
+  temp = main_game.init(roomTexture,playerMesh,syringeEmptyMesh,syringeFullMesh);
   scene = temp[0];
   camera = temp [1];
   player = temp[2];
@@ -152,15 +153,20 @@ function init() {
   vaccines = temp[0];
   noPlayingField = temp[1];
 
-  var t = animation.walkingPlayer(player,mixer,clock);
-  mixer = t[0];
-  clock = t[1];
-  AnimationAction = t[2];
+  temp = animation.walkingPlayerLeg(player);
+  mixerLeg = temp[0];
+  clockLeg = temp[1];
+  AnimationActionLeg = temp[2];
 
-  t = animation.stabVirus(player,mixerStab,clockStab);
-  mixerStab = t[0];
-  clockStab = t[1];
-  AnimationActionStab = t[2];
+  temp = animation.walkingPlayerArm(player);
+  mixerArm = temp[0];
+  clockArm = temp[1];
+  AnimationActionArm = temp[2];
+
+  temp = animation.stabVirus(player);
+  mixerStab = temp[0];
+  clockStab = temp[1];
+  AnimationActionStab = temp[2];
 
   // instantiate a listener
   const audioListener = new THREE.AudioListener();
@@ -185,12 +191,9 @@ function init() {
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown',function(event){
-    temp=controls.keypressedAgent(event,enabled,end_time,general_time,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks,AmbientSound);
+    temp=controls.keypressedAgent(event,enabled,end_time,general_time,AmbientSound);
     enabled=temp[0];
     end_time=temp[1];
-    countVirusAlive=temp[2];
-    countVaccinesAlive=temp[3];
-    countMasksAlive=temp[4];
   }, false);
   window.addEventListener('keyup',function(event){enabled=controls.keyreleasedAgent(event,enabled);}, false);
 
@@ -223,12 +226,12 @@ function onMouseClick( event ) {
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           enabled.stato=1;
           onGameLoad=true;
+          document.getElementById( 'blocker' ).style.display = '';
+          document.getElementById( 'loading' ).style.display = '';
         }
         if (INTERSECTED.uuid == ButtonArrayId[1]){
-          const blocker = document.getElementById( 'blocker' );
-          const instructions = document.getElementById( 'instructions' );
-          blocker.style.display = 'block';
-          instructions.style.display = '';
+          document.getElementById( 'blocker' ).style.display = 'block';
+          document.getElementById( 'instructions' ).style.display = '';
           enabled.stato = 4;
         }
       }
@@ -253,11 +256,13 @@ function render(){
       break;
     case 1:
       renderer.render( scene, camera );
-      mixer.update(clock.getDelta());
+      mixerLeg.update(clockLeg.getDelta());
+      mixerArm.update(clockArm.getDelta());
       break;
     case 2:
       renderer.render( scene, camera );
-      mixer.update(clock.getDelta());
+      mixerLeg.update(clockLeg.getDelta());
+      mixerArm.update(clockArm.getDelta());
       mixerStab.update(clockStab.getDelta());
       break;
     case 3:
@@ -274,15 +279,22 @@ function update(){
       raycaster.setFromCamera( pointer, camera_menu );
       const intersects = raycaster.intersectObjects( scene_menu.children);
 
-      if ( intersects.length > 0 ) {
-        if ( INTERSECTED != intersects[ 0 ].object && ButtonArrayId.includes(intersects[ 0 ].object.uuid)) {
+      if ( intersects.length > 0 && (ButtonArrayId.includes(intersects[ 0 ].object.uuid))) {
+        if ( INTERSECTED != intersects[ 0 ].object) {
           if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
           INTERSECTED = intersects[ 0 ].object;
           INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
           INTERSECTED.material.emissive.setHex( 0xff0000 );
         }
       }
-
+      else if ( intersects.length > 2 && (ButtonArrayId.includes(intersects[ 1 ].object.uuid))) {
+        if ( INTERSECTED != intersects[ 1 ].object) {
+          if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+          INTERSECTED = intersects[ 1 ].object;
+          INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+          INTERSECTED.material.emissive.setHex( 0xff0000 );
+        }
+      }
       else {
         if ( INTERSECTED ) {
           INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
@@ -296,6 +308,8 @@ function update(){
     case 1:
       //ON LOAD WHAT HAPPENS
       if (onGameLoad){
+        document.getElementById( 'blocker' ).style.display = 'none';
+        document.getElementById( 'loading' ).style.display = 'none';
         end_time=timer.setTimer(0,10);
         AmbientSound.play();
         onGameLoad=false;
@@ -309,10 +323,12 @@ function update(){
 
       /*---------------------------KEYFRAME ANIMATION---------------------------*/
       if (direction.equals(new THREE.Vector3(0,0,0))){
-        AnimationAction.stop();
+        AnimationActionLeg.stop();
+        AnimationActionArm.stop();
       }
       else{
-        AnimationAction.play();
+        AnimationActionLeg.play();
+        AnimationActionArm.play();
       }
 
       /*---------------------------OBJECT SPINNING ANIMATION---------------------------*/
@@ -325,6 +341,11 @@ function update(){
       countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive, 20);
       countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive, 20);
 
+      /*---------------------------INTERACTION OBJECTS---------------------------*/
+      if (countVaccinesAlive<40){
+        playerMesh.children[0].children[1].children[0].children[0].visible=true;
+        playerMesh.children[0].children[1].children[0].children[1].visible=false;
+      }
 
       //END OF MAZE PART TRIGGER
       if(timer.CheckDistance(general_time)){
@@ -346,12 +367,12 @@ function update(){
         virus = temp[0];
         noPlayingField = temp[1];
 
-        using_only_room = true;
-
         document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
 
-         enabled.stato = 2;
-        AmbientSound.playbackRate=5;
+        enabled.stato = 2;
+        AmbientSound.pause();
+        AmbientSound.playbackRate=2;
+        AmbientSound.play();
       }
 
       break;
@@ -363,61 +384,97 @@ function update(){
 
       /*---------------------------KEYFRAME ANIMATION---------------------------*/
       if (direction.equals(new THREE.Vector3(0,0,0))){
-        AnimationAction.stop();
+        AnimationActionLeg.stop();
+        AnimationActionArm.stop();
       }
       else{
-        AnimationAction.play();
+        AnimationActionLeg.play();
+        if(!isStabbing){
+          AnimationActionArm.play();
+        }
       }
 
+      /*---------------------------STABBING ANIMATION---------------------------*/
       if(enabled.z){
-        var t = animation.stabVirus(player,mixerStab,clockStab);
-        mixerStab = t[0];
-        clockStab = t[1];
-        AnimationActionStab = t[2];
+        if(vaccines.length - countVaccinesAlive > 0){
+          countVirusAlive = interaction.interactionPlayerObject(virus, player.position.x, player.position.z, countVirusAlive, 70);
+          countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
+        }
+        AnimationActionArm.stop();
         AnimationActionStab.play();
+        enabled.z=false;
+        isStabbing=true;
       }
-      //if(!enabled.z) AnimationActionStab.stop();
+      mixerStab.addEventListener( 'finished', function( e ) {
+        isStabbing=false;
+        AnimationActionStab.stop();
+        AnimationActionArm.play();
+      } );
+      if(vaccines.length - countVaccinesAlive<=0){
+        playerMesh.children[0].children[1].children[0].children[0].visible=false;
+        playerMesh.children[0].children[1].children[0].children[1].visible=true;
+      }
 
       /*---------------------------VIRUS LOGIC---------------------------*/
-      virus_func.detectionVirus(player, virus);
+      virus_func.detectionVirus(player, virus,activatedGel);
       virus_func.chasePlayer(player,virus);
 
-      //FIX THIS
-      // if(foundVirus && !activatedGel) AnimationActionVirus.play();
-      // if(foundVirus && activatedGel){
-      //    AnimationActionVirus.stop();
-      //    foundVirus = false;
-      // }
+      /*---------------------------VIRUS DAMAGE---------------------------*/
+      if(!activatedMask){
+        remainingLive = interaction.contactWithVirus(virus,player,remainingLive);
+      }
 
       /*---------------------------MASK LOGIC---------------------------*/
-      if(enabled.x && (masks.length-countMasksAlive) > 0){
+      //activate the mask
+      if(enabled.x && !activatedMask &&(masks.length-countMasksAlive) > 0){
         countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
         timerMask=timer.setTimer(0,5);
         activatedMask = true;
       }
 
-      if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask);
-
-      if(!activatedMask || time_remainingMask <= 0){
+      //deactivate the mask after elapsed time
+      if(activatedMask&&timer.CheckTimer(timerMask)){
         activatedMask = false;
-        remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
       }
 
       /*---------------------------GEL LOGIC---------------------------*/
-      if (enabled.c && (gels.length-countGelsAlive) > 0){
+      if (enabled.c && !activatedGel && (gels.length-countGelsAlive) > 0){
         countGelsAlive = interaction.gelVirus(gels,countGelsAlive);
         timerGel=timer.setTimer(0,5);
+        enabled.scale=6;
         activatedGel = true;
       }
 
-      if(activatedGel){
-        if(!timer.CheckTimer(timerGel)){
-          enabled.scale=6;
+      //deactivate the gel after elapsed time
+      if(activatedGel&&timer.CheckTimer(timerGel)){
+        enabled.scale=2;
+        activatedGel = false;
+      }
+
+      /*---------------------------END OF GAME TRIGGER---------------------------*/
+      //YOU LOSE
+      if (remainingLive<=0){
+        enabled.stato=5;
+        document.getElementById('blocker').style.display = '';
+        document.getElementById('end_page').style.display = '';
+        document.getElementById('end_page').innerHTML = "YOU HAVE BEEN DEFEATED";
+        let arrayDisactivation = ['virus','gel','mask','vaccine','timer','contact'];
+        for (let x =0; x<arrayDisactivation.length;x++){
+          document.getElementById(arrayDisactivation[x]).style.display = 'none';
         }
-        else{
-          enabled.scale=2;
-          activatedGel = false;
+        AmbientSound.pause();
+      }
+      //YOU WIN
+      if (countVirusAlive<=0){
+        enabled.stato=5;
+        document.getElementById('blocker').style.display = '';
+        document.getElementById('end_page').style.display = '';
+        document.getElementById('end_page').innerHTML = "YOU WON</br>YOU HAVE DEFEATED THE INFECTION!!!";
+        let arrayDisactivation = ['virus','gel','mask','vaccine','timer','contact'];
+        for (let x =0; x<arrayDisactivation.length;x++){
+          document.getElementById(arrayDisactivation[x]).style.display = 'none';
         }
+        AmbientSound.pause();
       }
 
       break;

@@ -18,7 +18,7 @@ export function init(){
   };
   return enabled;
 }
-export function keypressedAgent(event,enabled,end_time,time_remaining,virus,playerX,playerZ,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks,AmbientSound) {
+export function keypressedAgent(event,enabled,end_time,time_remaining,AmbientSound) {
   switch(event.key) {
     case 'q':
       enabled[event.key]=true;
@@ -39,25 +39,29 @@ export function keypressedAgent(event,enabled,end_time,time_remaining,virus,play
       enabled[event.key]=true;
       break;
     case 'Escape':
-      if(enabled.stato == 4){
-        const blocker = document.getElementById( 'blocker' );
-        const instructions = document.getElementById( 'instructions' );
-        instructions.style.display = 'none';
-        blocker.style.display = 'none';
-        enabled.stato = 0;
-      }
-      if(enabled.stato == 1 || enabled.stato == 2){
+      if(enabled.stato == 1 || enabled.stato == 2 || enabled.stato == 3){
         enabled[event.key]=!enabled[event.key];
         if (enabled[event.key]) {
           AmbientSound.pause();
           enabled.old=enabled.stato;
           enabled.stato=3;
+          document.getElementById( 'blocker' ).style.display = '';
+          document.getElementById( 'pause_menu' ).style.display = '';
+          document.getElementById( 'contact' ).style.display = 'none';
         }
         else {
           AmbientSound.play();
-           enabled.stato=enabled.old;
+          enabled.stato=enabled.old;
           end_time= new Date().getTime() + time_remaining;
+          document.getElementById( 'blocker' ).style.display = 'none';
+          document.getElementById( 'pause_menu' ).style.display = 'none';
+          document.getElementById( 'contact' ).style.display = '';
         }
+      }
+      if(enabled.stato == 4){
+        document.getElementById( 'blocker' ).style.display = 'none';
+        document.getElementById( 'instructions' ).style.display = 'none';
+        enabled.stato = 0;
       }
       break;
     case 'r':
@@ -69,11 +73,6 @@ export function keypressedAgent(event,enabled,end_time,time_remaining,virus,play
       break;
     case 'z':
       enabled[event.key]=true;
-      if(vaccines.length - countVaccinesAlive > 0){
-        //console.log("sono qui");
-        countVirusAlive = interaction.interactionPlayerObject(virus, playerX, playerZ, countVirusAlive, 70);
-        countVaccinesAlive = interaction.vaccineVirus(countVaccinesAlive, vaccines);
-      }
       break;
     case 'x':
       enabled[event.key]=true;
@@ -82,7 +81,7 @@ export function keypressedAgent(event,enabled,end_time,time_remaining,virus,play
       enabled[event.key]=true;
       break;
   }
-  return [enabled,end_time,countVirusAlive,countVaccinesAlive,countMasksAlive,remainingLive];
+  return [enabled,end_time];
 }
 
 export function keyreleasedAgent(event,enabled) {

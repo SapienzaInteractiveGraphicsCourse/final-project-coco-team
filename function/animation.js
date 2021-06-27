@@ -1,15 +1,10 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 
-export function walkingPlayer(player,mixer,clock){
-  /*var times = [0, 2, 4];
-  var values = [0,0,player.position.z, 0,0,player.position.z, 0,0,player.position.z];
-  var posBody = new THREE.VectorKeyframeTrack('Body.position', times, values);*/
+export function walkingPlayerLeg(player){
   var values;
   var times;
   var position;
   var duration = 16;
-  //var values = [0,0,player.position.z+2, 0,0,player.position.z-2, 0,0,player.position.z+2];
-  //var posRightLeg = new THREE.VectorKeyframeTrack('UpperLeftLeg.position', times, values);
   var angleArray=[-Math.PI,             //0
                   -Math.PI*3/4,         //1
                   -Math.PI/2*3,         //2
@@ -81,17 +76,95 @@ export function walkingPlayer(player,mixer,clock){
   var rotationLowerRight = new THREE.QuaternionKeyframeTrack( 'LowerRightLeg.quaternion',times,values);
 
   var clip = new THREE.AnimationClip("walk", duration, [posBody, rotationUpperLeft, rotationUpperRight, rotationLowerLeft, rotationLowerRight]);
-  mixer = new THREE.AnimationMixer(player);
+  var mixer = new THREE.AnimationMixer(player);
 
   var AnimationAction = mixer.clipAction(clip);
   AnimationAction.clampWhenFinished=true;
   AnimationAction.timeScale = duration;
 
-  clock = new THREE.Clock();
+  var clock = new THREE.Clock();
   return [mixer,clock,AnimationAction];
 }
 
-export function stabVirus(player, mixer, clock){
+export function walkingPlayerArm(player){
+  var values;
+  var times;
+  var position;
+  var duration = 8;
+  var angleArray=[-Math.PI,             //0
+                  -Math.PI*3/4,         //1
+                  -Math.PI/2*3,         //2
+                  -Math.PI/2,           //3
+                  -Math.PI/3,           //4
+                  -Math.PI/4,           //5
+                  0,                    //6
+                  Math.PI/4,            //7
+                  Math.PI/3,            //8
+                  Math.PI/2,            //9
+                  Math.PI*2/3,          //10
+                  Math.PI*3/4,          //11
+                  Math.PI];             //12
+  var qArray=[];
+  for (let x=0;x<angleArray.length;x++){
+    qArray.push(new THREE.Quaternion().setFromEuler(new THREE.Euler( angleArray[x], 0, 0, 'XYZ' )));
+  }
+
+  times = [0, 2, 4, 6, 8];
+  position=[6,7,6,5,6];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationUpperLeft = new THREE.QuaternionKeyframeTrack( 'UpperLeftArm.quaternion', times, values);
+
+  times = [0, 2, 4, 6, 8];
+  position=[7,6,7,8,7];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationLowerLeft = new THREE.QuaternionKeyframeTrack( 'LowerLeftArm.quaternion', times, values);
+
+  times = [0, 2, 4, 6, 8];
+  position=[6,5,6,7,6];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationUpperRight = new THREE.QuaternionKeyframeTrack( 'UpperRightArm.quaternion',times,values);
+
+  times = [0, 2, 4, 6, 8];
+  position=[7,8,7,6,7];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationLowerRight = new THREE.QuaternionKeyframeTrack( 'LowerRightArm.quaternion',times,values);
+
+  var clip = new THREE.AnimationClip("walk", duration, [rotationUpperLeft, rotationUpperRight, rotationLowerLeft, rotationLowerRight]);
+  var mixer = new THREE.AnimationMixer(player);
+
+  var AnimationAction = mixer.clipAction(clip);
+  AnimationAction.clampWhenFinished=true;
+  AnimationAction.timeScale = duration;
+
+  var clock = new THREE.Clock();
+  return [mixer,clock,AnimationAction];
+}
+
+export function stabVirus(player){
   var values;
   var times;
   var position;
@@ -132,14 +205,14 @@ export function stabVirus(player, mixer, clock){
 
 
   var clip = new THREE.AnimationClip("stab", duration, [rotationUpperLeft,rotationLowerLeft]);
-  mixer = new THREE.AnimationMixer(player);
+  var mixer = new THREE.AnimationMixer(player);
 
   var AnimationAction = mixer.clipAction(clip);
   //AnimationAction.clampWhenFinished=true;
   AnimationAction.loop = THREE.LoopOnce;
   AnimationAction.timeScale = duration;
 
-  clock = new THREE.Clock();
+  var clock = new THREE.Clock();
   return [mixer,clock,AnimationAction];
 
 }

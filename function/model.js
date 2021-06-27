@@ -165,7 +165,7 @@ export function getSyringeEmptyMesh () {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./resources/models/Syringe_empty.gltf',
     function ( gltf ) {
-      let scale=1.5;
+      let scale=0.5;
       const SyringeEmptyMesh = gltf.scene;
       SyringeEmptyMesh.scale.set(SyringeEmptyMesh.scale.x * scale, SyringeEmptyMesh.scale.y * scale, SyringeEmptyMesh.scale.z * scale);
       SyringeEmptyMesh.position.y += 40;

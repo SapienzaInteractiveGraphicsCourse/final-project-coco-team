@@ -1,11 +1,12 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 
-export function detectionVirus(player, virus){
+export function detectionVirus(player, virus, activatedGel){
   let playerX=player.position.x;
   let playerZ=player.position.z;
   var maxDetectionDistance = 80**2;
   var maxChasingDistance = 140**2;
   for(let i = 0; i<virus.length; i++){
+    if (!activatedGel){
       if(virus[i].visible){
           let virusX=virus[i].position.x;
           let virusZ=virus[i].position.z;
@@ -26,8 +27,14 @@ export function detectionVirus(player, virus){
               virus[i].userData.chasing=false;
             }
           }
+        }
+      }
+    else {
+      if (virus[i].visible){
+        virus[i].userData.chasing=false;
       }
     }
+  }
 }
 
 export function chasePlayer(player,virus){

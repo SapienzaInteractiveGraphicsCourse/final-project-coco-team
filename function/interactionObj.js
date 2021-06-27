@@ -92,39 +92,26 @@ export function vaccineVirus(nAliveObj, objectsArray){
   return nAliveObj+1;
 }
 
-
-/*export function vaccineVirus(playerX,playerZ,virus){
-  var maxDistance = 70;
-
-  for(var i = 0; i<virus.length; i++){
-    if(objectsArray[i].visible == true){
-      var distance = (playerX-virus[i].position.x)**2 + (playerZ-virus[i].position.z)**2);
-      if(distance < maxDistance*maxDistance){
-
-      }
-    }
-  }
-}*/
-
 export function maskVirus(masks,countMasksAlive){
   var remain = masks.length - countMasksAlive - 1;
   document.getElementById("mask").innerHTML = "&#128567 x " + remain;
   return countMasksAlive+1;
 }
 
+
 export function checkNearVirus(virus,playerX,playerZ,ray){
   var bbox = [];
-  for(var i = 0; i<virus.length; i++){
+  for(let i = 0; i<virus.length; i++){
     var box = new THREE.Box3().setFromObject(virus[i]);
     bbox.push(box);
   }
-  var inside = false;
-  for(var i = 0; i<virus.length && !inside; i++){
+  var inside = 0;
+  for(let i = 0; i<virus.length; i++){
     if(virus[i].visible == true){
       var x_in = (bbox[i].min.x - ray) <= playerX && playerX <= (bbox[i].max.x + ray);
       var z_in = (bbox[i].min.z - ray) <= playerZ && playerZ <= (bbox[i].max.z + ray);
       if(x_in && z_in){
-        inside = true;
+        inside++;
       }
     }
   }
@@ -132,10 +119,10 @@ export function checkNearVirus(virus,playerX,playerZ,ray){
 }
 
 
-export function contactWithVirus(virus, remainingLive, playerX, playerZ){
-  var inside = checkNearVirus(virus, playerX, playerZ, 50);
+export function contactWithVirus(virus, player, remainingLive){
+  var inside = checkNearVirus(virus, player.position.x, player.position.z, 30);
   if(inside){
-      remainingLive -= 0.05; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
+      remainingLive -= 0.05*inside; //sono vicino al virus: o scappo, o lo uccido, o perdo vito
       document.getElementById("contact").innerHTML = "&#128156 " + Math.round(remainingLive) + "%";
   }
   return remainingLive;

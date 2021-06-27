@@ -1,7 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
-export function init(roomTexture,playerMesh,syringeFull){
+export function init(roomTexture,playerMesh,syringeEmpty,syringeFull){
   var scene,camera;
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x800000);
@@ -28,9 +28,19 @@ export function init(roomTexture,playerMesh,syringeFull){
   scene.add(full_room);
 
   syringeFull.position.x = (((playerMesh.children[0]).children[1]).children[0]).position.x;
-  syringeFull.position.y = (((playerMesh.children[0]).children[1]).children[0]).position.y-10;
-  syringeFull.position.z = (((playerMesh.children[0]).children[1]).children[0]).position.z;
+  syringeFull.position.y = (((playerMesh.children[0]).children[1]).children[0]).position.y-2;
+  syringeFull.position.z = (((playerMesh.children[0]).children[1]).children[0]).position.z+3;
+  syringeFull.rotation.x = -Math.PI/2;
+  syringeFull.visible=false;
   (((playerMesh.children[0]).children[1]).children[0]).add(syringeFull);
+
+  syringeEmpty.position.x = (((playerMesh.children[0]).children[1]).children[0]).position.x;
+  syringeEmpty.position.y = (((playerMesh.children[0]).children[1]).children[0]).position.y-2;
+  syringeEmpty.position.z = (((playerMesh.children[0]).children[1]).children[0]).position.z+3;
+  syringeEmpty.rotation.x = -Math.PI/2;
+  syringeEmpty.visible=true;
+  (((playerMesh.children[0]).children[1]).children[0]).add(syringeEmpty);
+
   scene.add(playerMesh);
 
   /* CAMERA STUFF*/

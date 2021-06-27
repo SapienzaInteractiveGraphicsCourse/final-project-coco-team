@@ -69,6 +69,45 @@
 				font-size: 14px;
 				cursor: pointer;
 			}
+      #pause_menu {
+				width: 100%;
+				height: 100%;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				text-align: center;
+				font-size: 14px;
+				cursor: pointer;
+			}
+      #loading {
+				width: 100%;
+				height: 100%;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				text-align: center;
+				font-size: 40px;
+				cursor: pointer;
+			}
+      #end_page {
+				width: 100%;
+				height: 100%;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				text-align: center;
+				font-size: 30px;
+				cursor: pointer;
+			}
     </style>
     </head>
   <body>
@@ -78,7 +117,7 @@
           <br/><br/><br/>
           Move: WASD<br/>
           Rotation: QE<br/>
-          Camera: R<br/>
+          Change Camera Angle: R<br/>
           Mask: X<br/>
           Gel: C<br/>
           Vaccine: Z<br/>
@@ -88,6 +127,28 @@
           Press ESC to return to the main page.<br/>
         </p>
       </div>
+      <div id="pause_menu">
+        <p>
+          PAUSE MENU
+          <br/><br/><br/>
+          Move: WASD<br/>
+          Rotation: QE<br/>
+          Change Camera Angle: R<br/>
+          Mask: X<br/>
+          Gel: C<br/>
+          Vaccine: Z<br/>
+          <br/>
+          <br/>
+          <br/>
+          Press ESC to return to the game.<br/>
+        </p>
+      </div>
+      <div id="loading">
+        <p>
+          LOADING...
+        </p>
+      </div>
+      <div id="end_page"></div>
     </div>
     <p0 id="timer"></p0>
     <p1 id="vaccine"></p1>
@@ -98,10 +159,10 @@
 
   </body>
   <script>
-    const blocker = document.getElementById( 'blocker' );
-    const instructions = document.getElementById( 'instructions' );
-    instructions.style.display = 'none';
-    blocker.style.display = 'none';
+    document.getElementById( 'blocker' ).style.display = 'none';
+    document.getElementById( 'instructions' ).style.display = 'none';
+    document.getElementById( 'pause_menu' ).style.display = 'none';
+    document.getElementById( 'loading' ).style.display = 'none';
   </script>
 
 </html>

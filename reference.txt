@@ -1,6 +1,3 @@
 ---TODOLIST
-Animazione virus se detectato player
-Animazione braccia movimento
-Comandi menu(menu di pausa, schermata di vittoria/sconfitta HTML)
-Fixing interaction menu;
-fixing control remove check;
+
+set timer a un minuto a progetto completato
