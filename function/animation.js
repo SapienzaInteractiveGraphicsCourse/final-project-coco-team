@@ -91,6 +91,59 @@ export function walkingPlayer(player,mixer,clock){
   return [mixer,clock,AnimationAction];
 }
 
+export function stabVirus(player, mixer, clock){
+  var values;
+  var times;
+  var position;
+  var duration = 12;
+
+  var angleArray=[Math.PI*2/3,  //0
+                  Math.PI*5/6,  //1
+                  0,            //2
+                  Math.PI/4,    //3
+                  Math.PI/2];   //4
+
+  var qArray=[];
+  for (let x=0;x<angleArray.length;x++){
+    qArray.push(new THREE.Quaternion().setFromEuler(new THREE.Euler( angleArray[x], 0, 0, 'XYZ' )));
+  }
+
+  times = [0, 2, 4, 12];
+  position=[2, 3, 4, 2];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationUpperLeft = new THREE.QuaternionKeyframeTrack( 'UpperLeftArm.quaternion', times, values);
+
+  times = [0, 2, 4, 6, 10, 12];
+  position=[2, 3, 4, 1, 4, 2];
+  values = [];
+  for (let x=0;x<position.length;x++){
+    values.push(qArray[position[x]].x);
+    values.push(qArray[position[x]].y);
+    values.push(qArray[position[x]].z);
+    values.push(qArray[position[x]].w);
+  }
+  var rotationLowerLeft = new THREE.QuaternionKeyframeTrack( 'LowerLeftArm.quaternion', times, values);
+
+
+  var clip = new THREE.AnimationClip("stab", duration, [rotationUpperLeft,rotationLowerLeft]);
+  mixer = new THREE.AnimationMixer(player);
+
+  var AnimationAction = mixer.clipAction(clip);
+  //AnimationAction.clampWhenFinished=true;
+  AnimationAction.loop = THREE.LoopOnce
+  AnimationAction.timeScale = duration;
+
+  clock = new THREE.Clock();
+  return [mixer,clock,AnimationAction];
+
+}
+
 export function spinObjects(Array){
   for (let x=0;x<Array.length;x++){
     let rotationEuler = new THREE.Euler( 0, Math.PI/25, 0, 'XYZ' );

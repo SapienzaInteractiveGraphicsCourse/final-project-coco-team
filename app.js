@@ -66,6 +66,9 @@ var foundVirus=false;
 
 var AmbientSound;
 
+var mixerStab,clockStab;
+var AnimationActionStab;
+
 
 loader();
 
@@ -117,7 +120,14 @@ function init() {
   ButtonArrayId = temp [2];
 
 /*---------------------------MAIN SCENE STUFF---------------------------*/
-  temp = main_game.init(roomTexture,playerMesh);
+  syringeFullMesh.name = 'syringeFull';
+  syringeEmptyMesh.userData.tag = 'syringeEmpty';
+  virusMesh.userData.tag = 'virus';
+  vaccineMesh.userData.tag = 'vaccine';
+  maskMesh.userData.tag = 'mask';
+  gelMesh.userData.tag = 'gel';
+
+  temp = main_game.init(roomTexture,playerMesh,syringeFullMesh);
   scene = temp[0];
   camera = temp [1];
   player = temp[2];
@@ -126,12 +136,7 @@ function init() {
   only_room = temp[5];
   noPlayingField = temp[6];
 
-  syringeFullMesh.userData.tag = 'syringeFull';
-  syringeEmptyMesh.userData.tag = 'syringeEmpty';
-  virusMesh.userData.tag = 'virus';
-  vaccineMesh.userData.tag = 'vaccine';
-  maskMesh.userData.tag = 'mask';
-  gelMesh.userData.tag = 'gel';
+
 
   noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
 
@@ -154,6 +159,11 @@ function init() {
   mixer = t[0];
   clock = t[1];
   AnimationAction = t[2];
+
+  t = animation.stabVirus(player,mixerStab,clockStab);
+  mixerStab = t[0];
+  clockStab = t[1];
+  AnimationActionStab = t[2];
 
   // instantiate a listener
   const audioListener = new THREE.AudioListener();
@@ -250,6 +260,7 @@ function render(){
       renderer.render( scene, camera );
       mixer.update(clock.getDelta());
       if(foundVirus) mixerVirus.update(clockVirus.getDelta());
+      mixerStab.update(clockStab.getDelta());
       break;
     case 3:
       renderer.render( scene, camera );
@@ -355,6 +366,15 @@ function update(){
       else{
         AnimationAction.play();
       }
+
+      if(enabled.z){
+        var t = animation.stabVirus(player,mixerStab,clockStab);
+        mixerStab = t[0];
+        clockStab = t[1];
+        AnimationActionStab = t[2];
+        AnimationActionStab.play();
+      }
+      //if(!enabled.z) AnimationActionStab.stop();
 
       /*---------------------------VIRUS LOGIC---------------------------*/
       var idx = animationVirus.nearestVirus(player.position.x, player.position.z, virus);

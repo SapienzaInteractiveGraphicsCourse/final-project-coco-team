@@ -143,7 +143,8 @@ export function getSyringeFullMesh () {
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('./resources/models/Syringe_full.gltf',
     function ( gltf ) {
-      let scale=1.5;
+      //let scale=1.5;
+      let scale = 0.5;
       const SyringeFullMesh = gltf.scene;
       SyringeFullMesh.scale.set(SyringeFullMesh.scale.x * scale, SyringeFullMesh.scale.y * scale, SyringeFullMesh.scale.z * scale);
       SyringeFullMesh.position.y += 40;

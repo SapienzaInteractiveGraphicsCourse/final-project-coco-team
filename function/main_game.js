@@ -1,7 +1,7 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import * as room from "./room.js";
 
-export function init(roomTexture,playerMesh){
+export function init(roomTexture,playerMesh,syringeFull){
   var scene,camera;
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x800000);
@@ -27,6 +27,10 @@ export function init(roomTexture,playerMesh){
   full_room.name = "full_room";
   scene.add(full_room);
 
+  syringeFull.position.x = (((playerMesh.children[0]).children[1]).children[0]).position.x;
+  syringeFull.position.y = (((playerMesh.children[0]).children[1]).children[0]).position.y-10;
+  syringeFull.position.z = (((playerMesh.children[0]).children[1]).children[0]).position.z;
+  (((playerMesh.children[0]).children[1]).children[0]).add(syringeFull);
   scene.add(playerMesh);
 
   /* CAMERA STUFF*/
