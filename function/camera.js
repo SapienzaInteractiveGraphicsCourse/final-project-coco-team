@@ -31,7 +31,7 @@ export function checkCameraCollision (player,camera,enabled,room,raycast) {
       }
     }
 
-    var cameraPromisedDisplacement=new THREE.Vector3()
+    var cameraPromisedDisplacement=new THREE.Vector3();
     cameraPromisedDisplacement.copy(cameradisplacement[enabled.r]);
     if (enabled.r==1&&Colliding_Distance<50) {
         cameraPromisedDisplacement.z=Colliding_Distance-5;
