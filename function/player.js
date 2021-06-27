@@ -110,8 +110,8 @@ export function updatePlayerRunningRotation(enabled,player){
 }
 
 export function getPlayerDirection(player,enabled){
-  var dirZ = new THREE.Vector3(0,0,2);
-  var dirX = new THREE.Vector3(2,0,0);
+  var dirZ = new THREE.Vector3(0,0,1);
+  var dirX = new THREE.Vector3(1,0,0);
 
 
   dirZ.applyQuaternion(player.quaternion);
@@ -156,6 +156,7 @@ export function getPlayerMovement(player,camera,enabled,RayCasterArray,room){
 
     /*---------------------------PLAYER MOVEMENT---------------------------*/
     var direction=getPlayerDirection(player,enabled);
+    direction.normalize().multiplyScalar(enabled.scale);
 
     if (!direction.equals(new THREE.Vector3(0,0,0))){
       direction= checkPlayerCollision(direction,RayCasterArray,room);

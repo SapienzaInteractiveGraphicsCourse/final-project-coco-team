@@ -12,11 +12,13 @@ export function init(){
     "r":1,
     "l":false,
     "z":false,
-    "old":1
+    "old":1,
+    "scale":2,
+    "stato":0
   };
   return enabled;
 }
-export function keypressedAgent(event,enabled,stato,end_time,time_remaining,virus,playerX,playerZ,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks) {
+export function keypressedAgent(event,enabled,end_time,time_remaining,virus,playerX,playerZ,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks,AmbientSound) {
   switch(event.key) {
     case 'q':
       enabled[event.key]=true;
@@ -39,11 +41,13 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
     case 'Escape':
       enabled[event.key]=!enabled[event.key];
       if (enabled[event.key]) {
-        enabled.old=stato;
-        stato=3;
+        AmbientSound.pause();
+        enabled.old=enabled.stato;
+        enabled.stato=3;
       }
       else {
-        stato=enabled.old;
+        AmbientSound.play();
+         enabled.stato=enabled.old;
         end_time= new Date().getTime() + time_remaining;
       }
       break;
@@ -69,7 +73,7 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
       enabled[event.key]=true;
       break;
   }
-  return [enabled,stato,end_time,countVirusAlive,countVaccinesAlive,countMasksAlive,remainingLive];
+  return [enabled,end_time,countVirusAlive,countVaccinesAlive,countMasksAlive,remainingLive];
 }
 
 export function keyreleasedAgent(event,enabled) {

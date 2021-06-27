@@ -17,7 +17,6 @@ var virusMesh,roomTexture,vaccineMesh,font,sound,playerMesh,maskMesh,gelMesh,syr
 var camera, scene, renderer;
 var scene_menu,camera_menu;
 
-var stato;
 var pointer,raycaster,INTERSECTED;
 
 var ButtonArrayId;
@@ -102,7 +101,6 @@ function loader(){
 
 /*-----------------------INITIALIZING THE SCENES-------------------------*/
 function init() {
-  stato=0;
   enabled=controls.init();
 
   pointer = new THREE.Vector2();
@@ -180,13 +178,12 @@ function init() {
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown',function(event){
-    temp=controls.keypressedAgent(event,enabled,stato,end_time,general_time,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks);
+    temp=controls.keypressedAgent(event,enabled,end_time,general_time,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks,AmbientSound);
     enabled=temp[0];
-    stato=temp[1];
-    end_time=temp[2];
-    countVirusAlive=temp[3];
-    countVaccinesAlive=temp[4];
-    countMasksAlive=temp[5];
+    end_time=temp[1];
+    countVirusAlive=temp[2];
+    countVaccinesAlive=temp[3];
+    countMasksAlive=temp[4];
   }, false);
   window.addEventListener('keyup',function(event){enabled=controls.keyreleasedAgent(event,enabled);}, false);
 
@@ -213,12 +210,12 @@ function onPointerMove( event ) {
 }
 
 function onMouseClick( event ) {
-  switch(stato) {
+  switch(enabled.stato) {
     case 0:
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
-          stato=1;
-          end_time=timer.setTimer(1,00);
+           enabled.stato=1;
+          end_time=timer.setTimer(1,0);
           AmbientSound.play();
           timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time));
         }
@@ -240,7 +237,7 @@ function animate() {
  }
 
 function render(){
-  switch(stato) {
+  switch( enabled.stato) {
     case 0:
       renderer.render( scene_menu, camera_menu );
       break;
@@ -263,7 +260,7 @@ function render(){
 }
 
 function update(){
-  switch(stato) {
+  switch( enabled.stato) {
 
     //MAIN MENU
     case 0:
@@ -317,7 +314,7 @@ function update(){
 
 
       //END OF MAZE PART TRIGGER
-      if(timer.timerCheckDistance(general_time)){
+      if(timer.CheckDistance(general_time)){
         //CHANGE TIMER TO VIRUS INFECTION
         timer.generalTimerChange();
 
@@ -340,7 +337,7 @@ function update(){
 
         document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
 
-        stato = 2;
+         enabled.stato = 2;
         AmbientSound.playbackRate=5;
       }
 
@@ -375,6 +372,7 @@ function update(){
          foundVirus = false;
       }
 
+      /*---------------------------MASK LOGIC---------------------------*/
       if(enabled.x && (masks.length-countMasksAlive) > 0){
         countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
         timerMask=timer.setTimer(0,5);
@@ -383,21 +381,19 @@ function update(){
 
       if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask);
 
+      /*---------------------------GEL LOGIC---------------------------*/
       if (enabled.c && (gels.length-countGelsAlive) > 0){
-        dirZ = dirZ.multiplyScalar(6);
-        dirX = dirX.multiplyScalar(6);
         countGelsAlive = interaction.gelVirus(gels,countGelsAlive);
         timerGel=timer.setTimer(0,5);
         activatedGel = true;
       }
 
       if(activatedGel){
-        time_remainingGel=timer.timerUpdate(timerGel);
-        if(time_remainingGel > 0){
-          dirZ = dirZ.multiplyScalar(6);
-          dirX = dirX.multiplyScalar(6);
+        if(!timer.CheckTimer(timerGel)){
+          enabled.scale=6;
         }
         else{
+          enabled.scale=2;
           activatedGel = false;
         }
       }

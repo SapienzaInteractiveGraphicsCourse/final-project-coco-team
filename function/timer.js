@@ -24,7 +24,7 @@ export function generalTimerChange(){
   document.getElementById("timer").innerHTML = "VIRUS INFECTION BEGUN!!";
 }
 
-export function timerCheckDistance(distance){
+export function CheckDistance(distance){
   if (distance >= 0) {
     return false;
   }
@@ -32,7 +32,7 @@ export function timerCheckDistance(distance){
     return true;
 }
 
-export function timerCheckTimer(countDownDate){
+export function CheckTimer(countDownDate){
   // Get today's date and time
   var now = new Date().getTime();
 
