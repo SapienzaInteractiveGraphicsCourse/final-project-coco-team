@@ -1,5 +1,6 @@
 ---TODOLIST
 Animazione virus se detectato player
 Animazione braccia movimento
-Comandi menu(menu di pausa, schermata di vittoria HTML)
+Comandi menu(menu di pausa, schermata di vittoria/sconfitta HTML)
 Fixing interaction menu;
+fixing control remove check;
