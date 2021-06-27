@@ -40,7 +40,7 @@ export function keypressedAgent(event,enabled,stato,end_time,time_remaining,viru
       enabled[event.key]=!enabled[event.key];
       if (enabled[event.key]) {
         enabled.old=stato;
-        stato=2;
+        stato=3;
       }
       else {
         stato=enabled.old;

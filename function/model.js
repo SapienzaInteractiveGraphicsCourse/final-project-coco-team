@@ -179,3 +179,20 @@ export function getSyringeEmptyMesh () {
   });
   return myPromise;
 }
+
+export function getAudioFile () {
+  const myPromise = new Promise((resolve, reject) => {
+    const AudioLoader = new THREE.AudioLoader();
+    AudioLoader.load('./resources/audio/HeartBeat.ogg',
+    function ( audioBuffer ) {
+      resolve(audioBuffer);
+    },
+    function ( xhr ) {
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+      reject(error);
+    });
+  });
+  return myPromise;
+}

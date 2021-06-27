@@ -2,4 +2,3 @@
 Path finding virus semplice
 Animazione braccia (pressione z,accoltellamento,deve essere carina anche dal cambio di visuale)
 Comandi menu(opzioni/tutorial)
-Musica(Battito cardiaco)

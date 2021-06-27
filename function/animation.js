@@ -90,3 +90,12 @@ export function walkingPlayer(player,mixer,clock){
   clock = new THREE.Clock();
   return [mixer,clock,AnimationAction];
 }
+
+export function spinObjects(Array){
+  for (let x=0;x<Array.length;x++){
+    let rotationEuler = new THREE.Euler( 0, Math.PI/25, 0, 'XYZ' );
+    let rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromEuler(rotationEuler);
+    Array[x].applyQuaternion(rotationQuaternion);
+  }
+}

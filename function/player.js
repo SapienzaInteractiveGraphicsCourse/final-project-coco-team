@@ -1,4 +1,5 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as camera_func from "./camera.js";
 
 export function checkPlayerCollision(direction,raycasterArray,room){
   var Collision_Distance = 17;
@@ -56,33 +57,116 @@ export function updatePlayerRayRotation(rotation,RayCasterArray){
   return RayCasterArray;
 }
 
-export function updatePlayerRunningRotation(direction,player){
-  if (direction.equals(new THREE.Vector3(1,0,0))){
-    player.children[0].rotation.y=-Math.PI/2;
+export function updatePlayerRunningRotation(enabled,player){
+  if (enabled.r==1){
+    let direction_1 = new THREE.Vector3(0,0,1);
+    let direction_2 = new THREE.Vector3(1,0,0);
+    let direction = new THREE.Vector3(0,0,0);
+
+    if (enabled.w) {
+      direction.sub(direction_1);
+    }
+    if (enabled.a) {
+      direction.sub(direction_2);
+    }
+    if (enabled.s) {
+      direction.add(direction_1);
+    }
+    if (enabled.d) {
+      direction.add(direction_2);
+    }
+
+    if (direction.equals(new THREE.Vector3(1,0,0))){
+      player.children[0].rotation.y=-Math.PI/2;
+    }
+    if (direction.equals(new THREE.Vector3(1,0,1))){
+      player.children[0].rotation.y=-Math.PI*3/4;
+    }
+    if (direction.equals(new THREE.Vector3(1,0,-1))){
+      player.children[0].rotation.y=-Math.PI/4;
+    }
+    if (direction.equals(new THREE.Vector3(0,0,1))){
+      player.children[0].rotation.y=Math.PI;
+    }
+    if (direction.equals(new THREE.Vector3(0,0,-1))){
+      player.children[0].rotation.y=0;
+    }
+    if (direction.equals(new THREE.Vector3(-1,0,1))){
+      player.children[0].rotation.y=Math.PI*3/4;
+    }
+    if (direction.equals(new THREE.Vector3(-1,0,0))){
+      player.children[0].rotation.y=Math.PI/2;
+    }
+    if (direction.equals(new THREE.Vector3(-1,0,-1))){
+      player.children[0].rotation.y=Math.PI/4;
+    }
+    if (direction.equals(new THREE.Vector3(0,0,0))){
+      player.children[0].rotation.y=0;
+    }
   }
-  if (direction.equals(new THREE.Vector3(1,0,1))){
-    player.children[0].rotation.y=-Math.PI*3/4;
-  }
-  if (direction.equals(new THREE.Vector3(1,0,-1))){
-    player.children[0].rotation.y=-Math.PI/4;
-  }
-  if (direction.equals(new THREE.Vector3(0,0,1))){
-    player.children[0].rotation.y=Math.PI;
-  }
-  if (direction.equals(new THREE.Vector3(0,0,-1))){
+  if (enabled.r==0){
     player.children[0].rotation.y=0;
   }
-  if (direction.equals(new THREE.Vector3(-1,0,1))){
-    player.children[0].rotation.y=Math.PI*3/4;
+}
+
+export function getPlayerDirection(player,enabled){
+  var dirZ = new THREE.Vector3(0,0,2);
+  var dirX = new THREE.Vector3(2,0,0);
+
+
+  dirZ.applyQuaternion(player.quaternion);
+  dirX.applyQuaternion(player.quaternion);
+
+  var direction = new THREE.Vector3(0,0,0);
+
+  if (enabled.w) {
+    direction.sub(dirZ);
   }
-  if (direction.equals(new THREE.Vector3(-1,0,0))){
-    player.children[0].rotation.y=Math.PI/2;
+  if (enabled.a) {
+    direction.sub(dirX);
   }
-  if (direction.equals(new THREE.Vector3(-1,0,-1))){
-    player.children[0].rotation.y=Math.PI/4;
+  if (enabled.s) {
+    direction.add(dirZ);
   }
-  if (direction.equals(new THREE.Vector3(0,0,0))){
-    player.children[0].rotation.y=0;
+  if (enabled.d) {
+    direction.add(dirX);
   }
-  
+  return direction;
+}
+
+export function getPlayerRotation(enabled){
+  var rotation=0;
+  if (enabled.q){
+    rotation += Math.PI/60;
+  }
+  if (enabled.e){
+    rotation -= Math.PI/60;
+  }
+  return rotation;
+}
+
+export function getPlayerMovement(player,camera,enabled,RayCasterArray,room){
+
+    /*---------------------------PLAYER ROTATION---------------------------*/
+    var rotation = getPlayerRotation(enabled);
+    if (rotation!=0){
+      player.rotation.y += rotation;
+      RayCasterArray= updatePlayerRayRotation(rotation,RayCasterArray);
+    }
+
+    /*---------------------------PLAYER MOVEMENT---------------------------*/
+    var direction=getPlayerDirection(player,enabled);
+
+    if (!direction.equals(new THREE.Vector3(0,0,0))){
+      direction= checkPlayerCollision(direction,RayCasterArray,room);
+      player.position.add(direction);
+      RayCasterArray= updatePlayerRayPosition(player,RayCasterArray);
+    }
+
+    /*---------------------------PLAYER ROTATION ANIMATION---------------------------*/
+    updatePlayerRunningRotation(enabled,player);
+
+    /*---------------------------CAMERA MOVEMENT---------------------------*/
+    camera_func.checkCameraCollision (player,camera,enabled,room,RayCasterArray[2]);
+    return direction;
 }

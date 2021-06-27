@@ -44,17 +44,11 @@ export function spreadingObj(nObject, objectMesh, noPlayingField, scene){
 }
 
 function expandNOplayingField(obj,noPlayingField){
-    var x = obj.position.x;
-    var z = obj.position.z;
-    var x_max = x+(60/2);
-    var x_min = x-(60/2);
-    var z_max = z+(60/2);
-    var z_min = z-(60/2);
     var noObjects = {
-      "x_max":x_max,
-      "x_min":x_min,
-      "z_max":z_max,
-      "z_min":z_min,
+      "x_max":obj.position.x+(60/2),
+      "x_min":obj.position.x-(60/2),
+      "z_max":obj.position.z+(60/2),
+      "z_min":obj.position.z-(60/2)
     };
     noPlayingField.push(noObjects);
     return noPlayingField;
@@ -89,15 +83,6 @@ export function interactionPlayerObject(objectsArray, playerX, playerZ, aliveObj
 export function disappearObject(objectsArray){
   for(var i = 0; i<objectsArray.length; i++){
     objectsArray[i].visible = false;
-  }
-}
-
-export function spinObjects(Array){
-  for (let x=0;x<Array.length;x++){
-    let rotationEuler = new THREE.Euler( 0, Math.PI/25, 0, 'XYZ' );
-    let rotationQuaternion = new THREE.Quaternion();
-    rotationQuaternion.setFromEuler(rotationEuler);
-    Array[x].applyQuaternion(rotationQuaternion);
   }
 }
 

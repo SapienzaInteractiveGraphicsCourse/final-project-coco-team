@@ -12,7 +12,7 @@ import * as player_func from "./function/player.js";
 import * as camera_func from "./function/camera.js";
 
 //resource that has to be loaded
-var virusMesh,roomTexture,vaccineMesh,font,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh;
+var virusMesh,roomTexture,vaccineMesh,font,sound,playerMesh,maskMesh,gelMesh,syringeFullMesh,syringeEmptyMesh,HeartBeat;
 
 var camera, scene, renderer;
 var scene_menu,camera_menu;
@@ -49,7 +49,7 @@ var countGelsAlive;
 var vaccines = [];
 var countVaccinesAlive;
 
-var end_time,time_remaining;
+var general_time,end_time;
 
 var mixer,clock;
 var remainingLive = 100;
@@ -65,6 +65,9 @@ var mixerVirus,clockVirus;
 var AnimationActionVirus;
 var foundVirus=false;
 
+var AmbientSound;
+
+
 loader();
 
 /*-----------------------LOADING MODEL WITH PROMISES-------------------------*/
@@ -78,7 +81,8 @@ function loader(){
   var syringeEmptyPromise = MODEL.getSyringeEmptyMesh();
   var syringeFullPromise = MODEL.getSyringeFullMesh();
   var fontPromise = MODEL.getFont();
-  Promise.all([virusMeshPromise,roomTexturePromise,vaccinePromise,fontPromise,playerMeshPromise,maskPromise,gelPromise,syringeFullPromise,syringeEmptyPromise]).then(
+  var audioPromise = MODEL.getAudioFile();
+  Promise.all([virusMeshPromise,roomTexturePromise,vaccinePromise,fontPromise,playerMeshPromise,maskPromise,gelPromise,syringeFullPromise,syringeEmptyPromise,audioPromise]).then(
     data => {
     virusMesh = data[0];
     roomTexture = data[1];
@@ -89,6 +93,7 @@ function loader(){
     gelMesh=data[6];
     syringeFullMesh=data[7];
     syringeEmptyMesh=data[8];
+    HeartBeat=data[9];
     init();
   },error => {
     console.log( 'An error happened:',error );
@@ -142,21 +147,6 @@ function init() {
   gels = temp[0];
   noPlayingField = temp[1];
 
-  /*countSyringesFullAlive = 20;
-  temp = interaction.spreadingObj(countSyringesFullAlive, syringeFullMesh, noPlayingField, scene);
-  syringesFull = temp[0];
-  noPlayingField = temp[1];
-
-  countSyringesEmptyAlive = 20;
-  temp = interaction.spreadingObj(countSyringesEmptyAlive, syringeEmptyMesh, noPlayingField, scene);
-  syringesEmpty = temp[0];
-  noPlayingField = temp[1];
-
-  countVirusAlive = 20;
-  temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
-  virus = temp[0];
-  noPlayingField = temp[1];*/
-
   countVaccinesAlive = 40;
   temp  = interaction.spreadingObj(countVaccinesAlive, vaccineMesh, noPlayingField, scene);
   vaccines = temp[0];
@@ -167,6 +157,16 @@ function init() {
   clock = t[1];
   AnimationAction = t[2];
 
+  // instantiate a listener
+  const audioListener = new THREE.AudioListener();
+
+  AmbientSound = new THREE.Audio( audioListener );
+
+  camera.add( audioListener );
+  scene.add( AmbientSound );
+
+  AmbientSound.setBuffer( HeartBeat );
+  AmbientSound.setLoop(true);
 
 
 /*---------------------------MENU RAYCASTER---------------------------*/
@@ -180,7 +180,7 @@ function init() {
   document.addEventListener( 'click', onMouseClick );
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown',function(event){
-    temp=controls.keypressedAgent(event,enabled,stato,end_time,time_remaining,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks);
+    temp=controls.keypressedAgent(event,enabled,stato,end_time,general_time,virus,player.position.x,player.position.z,countVirusAlive,countVaccinesAlive,vaccines,remainingLive,countMasksAlive,masks);
     enabled=temp[0];
     stato=temp[1];
     end_time=temp[2];
@@ -218,7 +218,9 @@ function onMouseClick( event ) {
       if(INTERSECTED!=null){
         if (INTERSECTED.uuid == ButtonArrayId[0]){
           stato=1;
-          end_time=timer.setTimer(1,0);
+          end_time=timer.setTimer(1,00);
+          AmbientSound.play();
+          timer.generalTimerHTMLUpdater(timer.timerUpdate(end_time));
         }
         if (INTERSECTED.uuid == ButtonArrayId[1])
           console.log("Option");
@@ -288,46 +290,109 @@ function update(){
 
     //PUZZLE PART
     case 1:
-      time_remaining=timer.timerUpdate(end_time,true);
 
-      var isRotating,isMoving;
-      /*---------------------------PLAYER ROTATION---------------------------*/
-      var rotation = 0;
-      if (enabled.q){
-        rotation += Math.PI/60;
+      general_time=timer.timerUpdate(end_time);
+      timer.generalTimerHTMLUpdater(general_time);
+
+      //Get player movement
+      var direction = player_func.getPlayerMovement(player,camera,enabled,RayCasterArray,full_room);
+
+      /*---------------------------KEYFRAME ANIMATION---------------------------*/
+      if (direction.equals(new THREE.Vector3(0,0,0))){
+        AnimationAction.stop();
       }
-      if (enabled.e){
-        rotation -= Math.PI/60;
+      else{
+        AnimationAction.play();
       }
 
-      isRotating=rotation!=0;
-      if (isRotating){
-        player.rotation.y += rotation;
-        RayCasterArray=player_func.updatePlayerRayRotation(rotation,RayCasterArray);
-      }
-      /*---------------------------PLAYER MOVEMENT---------------------------*/
-      var dirZ = new THREE.Vector3(0,0,2);
-      var dirX = new THREE.Vector3(2,0,0);
-      var direction_1 = new THREE.Vector3(0,0,1);
-      var direction_2 = new THREE.Vector3(1,0,0);
-      var rotation_direction = new THREE.Vector3(0,0,0);
+      /*---------------------------OBJECT SPINNING ANIMATION---------------------------*/
+      animation.spinObjects(vaccines);
+      animation.spinObjects(masks);
+      animation.spinObjects(gels);
 
-      if(using_only_room && enabled.x && (masks.length-countMasksAlive) > 0){
+      /*---------------------------INTERACTION OBJECTS---------------------------*/
+      countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive, 20);
+      countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive, 20);
+      countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive, 20);
+
+
+      //END OF MAZE PART TRIGGER
+      if(timer.timerCheckDistance(general_time)){
+        //CHANGE TIMER TO VIRUS INFECTION
+        timer.generalTimerChange();
+
+        //SWAP ROOM
+        scene.add(only_room);
+        scene.remove(scene.children.find((child) => child.name === "full_room"));
+
+        //REMOVE ALL THE OBJECTS
+        interaction.disappearObject(vaccines);
+        interaction.disappearObject(masks);
+        interaction.disappearObject(gels);
+
+        noPlayingField = interaction.removePlayerPosition(player, []);
+        countVirusAlive = 10;
+        var temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
+        virus = temp[0];
+        noPlayingField = temp[1];
+
+        using_only_room = true;
+
+        document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
+
+        stato = 2;
+        AmbientSound.playbackRate=5;
+      }
+
+      break;
+    //VIRUS FIGHT
+    case 2:
+
+      //Get player movement
+      direction = player_func.getPlayerMovement(player,camera,enabled,RayCasterArray,only_room);
+
+      /*---------------------------KEYFRAME ANIMATION---------------------------*/
+      if (direction.equals(new THREE.Vector3(0,0,0))){
+        AnimationAction.stop();
+      }
+      else{
+        AnimationAction.play();
+      }
+
+      /*---------------------------VIRUS LOGIC---------------------------*/
+      var idx = animationVirus.nearestVirus(player.position.x, player.position.z, virus);
+      if(idx != virus.length+1){
+        var t = animationVirus.chasePlayer(player,virus[idx],mixerVirus,clockVirus);
+        mixerVirus = t[0];
+        clockVirus = t[1];
+        AnimationActionVirus = t[2];
+        foundVirus = true;
+      }
+
+      if(foundVirus && !activatedGel) AnimationActionVirus.play();
+      if(foundVirus && activatedGel){
+         AnimationActionVirus.stop();
+         foundVirus = false;
+      }
+
+      if(enabled.x && (masks.length-countMasksAlive) > 0){
         countMasksAlive = interaction.maskVirus(masks,countMasksAlive);
         timerMask=timer.setTimer(0,5);
         activatedMask = true;
       }
-      if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask,false);
 
-      if (using_only_room && enabled.c && (gels.length-countGelsAlive) > 0){
+      if(activatedMask) time_remainingMask=timer.timerUpdate(timerMask);
+
+      if (enabled.c && (gels.length-countGelsAlive) > 0){
         dirZ = dirZ.multiplyScalar(6);
         dirX = dirX.multiplyScalar(6);
         countGelsAlive = interaction.gelVirus(gels,countGelsAlive);
         timerGel=timer.setTimer(0,5);
         activatedGel = true;
       }
+
       if(activatedGel){
-        time_remainingGel=timer.timerUpdate(timerGel,false);
+        time_remainingGel=timer.timerUpdate(timerGel);
         if(time_remainingGel > 0){
           dirZ = dirZ.multiplyScalar(6);
           dirX = dirX.multiplyScalar(6);
@@ -337,121 +402,13 @@ function update(){
         }
       }
 
-      dirZ.applyQuaternion(player.quaternion);
-      dirX.applyQuaternion(player.quaternion);
-
-      var direction = new THREE.Vector3(0,0,0);
-      var movingDirection;
-
-      // if (enabled.w) direction.sub(dirZ);
-      // if (enabled.a) direction.sub(dirX);
-      // if (enabled.s) direction.add(dirZ);
-      // if (enabled.d) direction.add(dirX);
-      if (enabled.w) {
-        direction.sub(dirZ);
-        rotation_direction.sub(direction_1);
-      }
-      if (enabled.a) {
-        direction.sub(dirX);
-        rotation_direction.sub(direction_2);
-      }
-      if (enabled.s) {
-        direction.add(dirZ);
-        rotation_direction.add(direction_1);
-      }
-      if (enabled.d) {
-        direction.add(dirX);
-        rotation_direction.add(direction_2);
-      }
-      if (enabled.r==1){
-        player_func.updatePlayerRunningRotation(rotation_direction,player);
-      }
-      else{
-        player.children[0].rotation.y=0;
-      }
-
-      isMoving=!direction.equals(new THREE.Vector3(0,0,0));
-
-      if(foundVirus && !activatedGel) AnimationActionVirus.play();
-      if(foundVirus && activatedGel){
-         AnimationActionVirus.stop();
-         foundVirus = false;
-      }
-
-      if (isMoving){
-        AnimationAction.play();
-        if(!using_only_room){
-          movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,full_room);
-        }
-        else {
-          movingDirection=player_func.checkPlayerCollision(direction,RayCasterArray,only_room);
-        }
-        player.position.add(movingDirection);
-        RayCasterArray=player_func.updatePlayerRayPosition(player,RayCasterArray);
-      }
-      if (!isMoving){
-        AnimationAction.stop();
-      }
-      /*---------------------------CAMERA MOVEMENT---------------------------*/
-      if(!using_only_room){
-        camera_func.checkCameraCollision (player,camera,enabled,full_room,RayCasterArray[2]);
-      }
-      else {
-        camera_func.checkCameraCollision (player,camera,enabled,only_room,RayCasterArray[2]);
-      }
-
-      /*---------------------------INTERACTION OBJECTS---------------------------*/
-      if(!using_only_room){
-        interaction.spinObjects(vaccines);
-        countVaccinesAlive = interaction.interactionPlayerObject(vaccines, player.position.x, player.position.z, countVaccinesAlive, 20);
-
-        interaction.spinObjects(masks);
-        countMasksAlive = interaction.interactionPlayerObject(masks, player.position.x, player.position.z, countMasksAlive, 20);
-
-        interaction.spinObjects(gels);
-        countGelsAlive = interaction.interactionPlayerObject(gels, player.position.x, player.position.z, countGelsAlive, 20);
-      }
-
-      if(using_only_room){
-        var idx = animationVirus.nearestVirus(player.position.x, player.position.z, virus);
-        if(idx != virus.length+1){
-          var t = animationVirus.chasePlayer(player,virus[idx],mixerVirus,clockVirus);
-          mixerVirus = t[0];
-          clockVirus = t[1];
-          AnimationActionVirus = t[2];
-          foundVirus = true;
-        }
-
-      }
-
-      if(using_only_room && (!activatedMask || time_remainingMask <= 0)){
+      if(!activatedMask || time_remainingMask <= 0){
         activatedMask = false;
         remainingLive = interaction.contactWithVirus(virus, remainingLive, player.position.x, player.position.z);
       }
 
-      if(document.getElementById("timer").innerHTML == "VIRUS INFECTION BEGUN!!" && !using_only_room){
-          scene.add(only_room);
-          scene.remove(scene.children.find((child) => child.name === "full_room"));
-          interaction.disappearObject(vaccines);
-          interaction.disappearObject(masks);
-          interaction.disappearObject(gels);
-
-          noPlayingField = interaction.removePlayerPosition(player, noPlayingField);
-          countVirusAlive = 10;
-          var temp = interaction.spreadingObj(countVirusAlive, virusMesh, noPlayingField, scene);
-          virus = temp[0];
-          noPlayingField = temp[1];
-
-
-          using_only_room = true;
-
-          document.getElementById("contact").innerHTML = "&#128156 " + remainingLive + "%";
-        }
-
       break;
-    //VIRUS FIGHT
-    case 2:
-      break;
+    //PAUSE NOTHING HAPPENS HERE
     case 3:
       break;
     default:
@@ -459,24 +416,3 @@ function update(){
   }
 }
 
-
-function checkCameraCollision(cameraPosition){
-  let Collision_Distance = cameraPosition.z;
-  var collisionResultsObstacles;
-  if(using_only_room){
-    collisionResultsObstacles = RayCasterArray[2].intersectObjects(only_room.children);
-  }
-  else{
-    collisionResultsObstacles = RayCasterArray[2].intersectObjects(full_room.children);
-  }
-  if(collisionResultsObstacles.length > 0) {
-    if(collisionResultsObstacles[0].distance < Collision_Distance) {
-      let newCameraPositionObstacles = new THREE.Vector3().copy(cameraPosition);
-      newCameraPositionObstacles.z=collisionResultsObstacles[0].distance-1;
-      return newCameraPositionObstacles;
-    }
-    else{
-      return cameraPosition;
-    }
-  }
-}
