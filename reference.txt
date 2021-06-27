@@ -1,3 +1,0 @@
----TODOLIST
-
-set timer a un minuto a progetto completato
