@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link type="text/css" rel="stylesheet" href="./main.css">
     <script type="module" src="./app.js"></script>
+
     <style>
-      p {
+      p0 {
         text-align: center;
         font-size: 30px;
         margin-top: 20px;
@@ -49,15 +50,58 @@
         margin-left: 30px;
         position:absolute;
       }
+      #blocker {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(128,0,0,1);
+			}
+			#instructions {
+				width: 100%;
+				height: 100%;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				text-align: center;
+				font-size: 14px;
+				cursor: pointer;
+			}
     </style>
     </head>
   <body>
-    <p id="timer"></p>
+    <div id="blocker">
+			<div id="instructions">
+				<p>
+          <br/><br/><br/>
+					Move: WASD<br/>
+          Rotation: QE<br/>
+          Camera: R<br/>
+          Mask: X<br/>
+          Gel: C<br/>
+          Vaccine: Z<br/>
+          <br/>
+          <br/>
+          <br/>
+          Press ESC to return to the main page.<br/>
+				</p>
+			</div>
+		</div>
+    <p0 id="timer"></p0>
     <p1 id="vaccine"></p1>
     <p2 id="gel"></p2>
     <p3 id="mask"></p3>
     <p4 id="contact"></p4>
     <p5 id="virus"></p5>
+
   </body>
+  <script>
+    const blocker = document.getElementById( 'blocker' );
+    const instructions = document.getElementById( 'instructions' );
+    instructions.style.display = 'none';
+    blocker.style.display = 'none';
+  </script>
 
 </html>

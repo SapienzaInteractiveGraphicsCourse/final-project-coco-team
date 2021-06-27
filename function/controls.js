@@ -39,16 +39,25 @@ export function keypressedAgent(event,enabled,end_time,time_remaining,virus,play
       enabled[event.key]=true;
       break;
     case 'Escape':
-      enabled[event.key]=!enabled[event.key];
-      if (enabled[event.key]) {
-        AmbientSound.pause();
-        enabled.old=enabled.stato;
-        enabled.stato=3;
+      if(enabled.stato == 4){
+        const blocker = document.getElementById( 'blocker' );
+        const instructions = document.getElementById( 'instructions' );
+        instructions.style.display = 'none';
+        blocker.style.display = 'none';
+        enabled.stato = 0;
       }
-      else {
-        AmbientSound.play();
-         enabled.stato=enabled.old;
-        end_time= new Date().getTime() + time_remaining;
+      if(enabled.stato == 1 || enabled.stato == 2){
+        enabled[event.key]=!enabled[event.key];
+        if (enabled[event.key]) {
+          AmbientSound.pause();
+          enabled.old=enabled.stato;
+          enabled.stato=3;
+        }
+        else {
+          AmbientSound.play();
+           enabled.stato=enabled.old;
+          end_time= new Date().getTime() + time_remaining;
+        }
       }
       break;
     case 'r':

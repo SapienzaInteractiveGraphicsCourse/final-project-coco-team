@@ -82,7 +82,7 @@ export function init(font,roomTexture,playerMesh){
 
   const option_text_material = material_2.clone();
   option_text_material.needsUpdate=true;
-  const option_text_geometry = new THREE.TextGeometry( 'OPTION', {
+  const option_text_geometry = new THREE.TextGeometry( 'TUTORIAL', {
     font:font,
     size: 5,
     height: 1,
