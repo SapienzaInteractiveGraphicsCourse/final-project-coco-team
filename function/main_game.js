@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import * as room from "./room.js";
 
 export function init(roomTexture,playerMesh,syringeEmpty,syringeFull){

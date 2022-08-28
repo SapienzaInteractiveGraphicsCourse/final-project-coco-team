@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import * as MODEL from "./function/model.js";
 import * as menu from "./function/menu.js";
 import * as main_game from "./function/main_game.js";

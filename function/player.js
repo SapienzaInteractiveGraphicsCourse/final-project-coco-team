@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 import * as camera_func from "./camera.js";
 
 export function checkPlayerCollision(direction,raycasterArray,room){
