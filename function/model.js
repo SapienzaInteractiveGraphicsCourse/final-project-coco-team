@@ -1,5 +1,5 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
-import {GLTFLoader} from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import {GLTFLoader} from 'gltf-url';
 
 export function getTexture (){
   const myPromise = new Promise((resolve, reject) => {

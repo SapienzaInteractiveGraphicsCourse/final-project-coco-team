@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import * as THREE from 'three';
 
 const cameradisplacement = [new THREE.Vector3(0,20,0),new THREE.Vector3(0,20,50)];
 const camera_pointy = new THREE.Vector3(0,50,0);
